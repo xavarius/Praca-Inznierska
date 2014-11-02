@@ -4,8 +4,8 @@
     tools:context="com.example.maciejmalak.engineerwork.MainActivity" >
 
     <item
-        android:id="@+id/action_example"
-        android:title="@string/action_example"
+        android:id="@+id/action_my_place"
+        android:title="@string/action_my_place"
         app:showAsAction="withText|ifRoom"/>
     <item
         android:id="@+id/action_settings"

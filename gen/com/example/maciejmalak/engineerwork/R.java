@@ -2034,12 +2034,12 @@ containing a value of this type.
         public static final int action_bar_subtitle=0x7f080032;
         public static final int action_bar_title=0x7f080031;
         public static final int action_context_bar=0x7f080045;
-        public static final int action_example=0x7f080058;
         public static final int action_menu_divider=0x7f08002d;
         public static final int action_menu_presenter=0x7f08002e;
         public static final int action_mode_bar=0x7f080041;
         public static final int action_mode_bar_stub=0x7f080040;
         public static final int action_mode_close_button=0x7f080033;
+        public static final int action_my_place=0x7f080058;
         public static final int action_settings=0x7f080057;
         public static final int activity_chooser_view_content=0x7f080034;
         public static final int always=0x7f08001e;
@@ -2230,7 +2230,7 @@ containing a value of this type.
          */
         public static final int abc_shareactionprovider_share_with_application=0x7f060030;
         public static final int accept=0x7f060002;
-        public static final int action_example=0x7f060038;
+        public static final int action_my_place=0x7f060038;
         public static final int action_settings=0x7f060039;
         public static final int app_name=0x7f060032;
         /**   Text for notification shown when the Android Wear apps needs to be updated. Only shown on the wearable. [CHAR LIMIT=NONE] 

@@ -19,8 +19,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 
 public class MainActivity extends ActionBarActivity
@@ -37,8 +40,9 @@ public class MainActivity extends ActionBarActivity
     private CharSequence mTitle;
     
     /* Used within Google Map */
-    private GoogleMap map;
+    private static GoogleMap map;
     private LocationManager minorLocalizationManager;
+    private LocationProvider LocationProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +65,25 @@ public class MainActivity extends ActionBarActivity
         }
         
         checkProviders();
+        setLocationOnMap();
     }
     
+    protected void setLocationOnMap() { 
+    	
+    	if (minorLocalizationManager.isProviderEnabled(
+    			android.location.LocationManager.GPS_PROVIDER)) {
+		    LocationProvider = new LocationProvider(minorLocalizationManager);
+		    LocationProvider.setUpLocation();
+		    
+		    Toast.makeText(getApplicationContext(),
+	                "geoplace:" +  LocationProvider.getCurrentGeoPlace().toString(), Toast.LENGTH_SHORT)
+	                .show();
+		    
+			map.moveCamera(CameraUpdateFactory.newLatLng(LocationProvider.getCurrentGeoPlace()));
+			map.addMarker(new MarkerOptions().position(LocationProvider.getCurrentGeoPlace())
+						.title("Yours current position"));
+    	}
+    }
     /* Pobieramy referencjê do fragmentu mapy
      * jeœli siê uda wyszukujemy aktualn¹ pozycjê 
      */
@@ -138,8 +159,7 @@ public class MainActivity extends ActionBarActivity
         return super.onOptionsItemSelected(item);
     }
     
-
-	protected void checkProviders() {
+    protected void checkProviders() {
 		
 		minorLocalizationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 		
@@ -169,11 +189,13 @@ public class MainActivity extends ActionBarActivity
 				}); 	
         	AlertDialog alert = alertWindow.create();
         	alert.show();
+        	
         } else {
         	Toast.makeText(getApplicationContext(),
                     "GPS dostêpny w Providers", Toast.LENGTH_SHORT)
                     .show();
         }
+		
 	}
 
     /**

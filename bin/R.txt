@@ -436,12 +436,12 @@ int id action_bar_spinner 0x7f08002a
 int id action_bar_subtitle 0x7f080032
 int id action_bar_title 0x7f080031
 int id action_context_bar 0x7f080045
-int id action_example 0x7f080058
 int id action_menu_divider 0x7f08002d
 int id action_menu_presenter 0x7f08002e
 int id action_mode_bar 0x7f080041
 int id action_mode_bar_stub 0x7f080040
 int id action_mode_close_button 0x7f080033
+int id action_my_place 0x7f080058
 int id action_settings 0x7f080057
 int id activity_chooser_view_content 0x7f080034
 int id always 0x7f08001e
@@ -564,7 +564,7 @@ int string abc_searchview_description_voice 0x7f06002d
 int string abc_shareactionprovider_share_with 0x7f060031
 int string abc_shareactionprovider_share_with_application 0x7f060030
 int string accept 0x7f060002
-int string action_example 0x7f060038
+int string action_my_place 0x7f060038
 int string action_settings 0x7f060039
 int string app_name 0x7f060032
 int string common_android_wear_notification_needs_update_text 0x7f060009
