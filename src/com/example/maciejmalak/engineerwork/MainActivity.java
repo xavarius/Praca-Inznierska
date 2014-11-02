@@ -56,15 +56,21 @@ public class MainActivity extends ActionBarActivity
         
     }
     
+    /* Pobieramy referencjê do fragmentu mapy
+     * jeœli siê uda wyszukujemy aktualn¹ pozycjê 
+     */
+     
     public void loadingObjectOfMainMap() {
-    	map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
-                .getMap();
-    	if (map == null) {
-    		Toast.makeText(getApplicationContext(),
-                    "Mapa siê spierdoli³a", Toast.LENGTH_SHORT)
-                    .show();
-    	} else {
-    		map.setMyLocationEnabled(true);
+    	if( map == null) {
+	    	map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
+	                .getMap();
+	    	if (map != null) {
+	    		map.setMyLocationEnabled(true);
+	    	} else {
+	    		Toast.makeText(getApplicationContext(),
+	                    "Mapa siê spierdoli³a", Toast.LENGTH_SHORT)
+	                    .show();
+	    	}
     	}
     }
 
