@@ -1,7 +1,12 @@
 package com.example.maciejmalak.engineerwork;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
@@ -33,6 +38,7 @@ public class MainActivity extends ActionBarActivity
     
     /* Used within Google Map */
     private GoogleMap map;
+    private LocationManager minorLocalizationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +60,7 @@ public class MainActivity extends ActionBarActivity
             e.printStackTrace();
         }
         
+        checkProviders();
     }
     
     /* Pobieramy referencjê do fragmentu mapy
@@ -130,6 +137,44 @@ public class MainActivity extends ActionBarActivity
         }
         return super.onOptionsItemSelected(item);
     }
+    
+
+	protected void checkProviders() {
+		
+		minorLocalizationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+		
+		if (!minorLocalizationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) {
+			
+        	AlertDialog.Builder alertWindow = new AlertDialog.Builder(this);
+        	alertWindow.setTitle("GPS not enabled")
+        		.setMessage("Do you want to turn it on?")
+        		.setCancelable(true)
+        		.setPositiveButton("Yes, I do", 
+        			new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								startActivity(
+		        					new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+		        				);	
+							}
+        				} 
+        		)
+        		.setNegativeButton("No", 
+        			new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								dialog.cancel();
+								finish();
+							}
+				}); 	
+        	AlertDialog alert = alertWindow.create();
+        	alert.show();
+        } else {
+        	Toast.makeText(getApplicationContext(),
+                    "GPS dostêpny w Providers", Toast.LENGTH_SHORT)
+                    .show();
+        }
+	}
 
     /**
      * A placeholder fragment containing a simple view.
