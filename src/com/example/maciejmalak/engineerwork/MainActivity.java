@@ -19,10 +19,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 
 public class MainActivity extends ActionBarActivity
@@ -96,7 +94,7 @@ public class MainActivity extends ActionBarActivity
     	}
     }
     
-    protected boolean isGPSEnabled () {
+    protected boolean isGPSEnabled() {
     	if(minorLocalizationManager != null
     		&&	minorLocalizationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) {
     		return true;
@@ -108,7 +106,7 @@ public class MainActivity extends ActionBarActivity
 		
 		minorLocalizationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 		
-		if (!minorLocalizationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) {
+		if (!isGPSEnabled()) {
 			
         	AlertDialog.Builder alertWindow = new AlertDialog.Builder(this);
         	alertWindow.setTitle("GPS not enabled")
@@ -135,8 +133,7 @@ public class MainActivity extends ActionBarActivity
         	AlertDialog alert = alertWindow.create();
         	alert.show();
         	
-        	if(minorLocalizationManager
-        				.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) {
+        	if(isGPSEnabled()) {
         		GPSenabled = true;
         	} else {
         		Toast.makeText(getApplicationContext(),
