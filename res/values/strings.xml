@@ -9,5 +9,8 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_my_place">My Place</string>
     <string name="action_settings">Settings</string>
+    <string name="gps_enabled">GPS is enabled</string>
+    <string name="gps_distabled">GPS is not enabled</string>
+    <string name="action_my_start">My Start</string>
 
 </resources>

@@ -45,16 +45,25 @@ public class MainActivity extends ActionBarActivity
     
     /* Used within Google Map */
     private static GoogleMap map;
+    
     private LocationManager locationMgr;
+    
 	private Criteria criteria;
+	
 	private String providerName;
+	
 	private Location currentLocation;
+	
 	private LatLng currentPosition;
 	private LatLng phoneStartingPoint;
+	
 	private boolean GPSenabled;
 	private boolean NETenabled;
+	
 	private Marker currentPositionAsMarker, startPointAsMarker;
 
+	
+	/* -------- Implementation of Interfaces Section ------------------------------------------------------------ */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,7 +74,6 @@ public class MainActivity extends ActionBarActivity
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
 
-        // Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
@@ -87,116 +95,6 @@ public class MainActivity extends ActionBarActivity
     } /* onCreate */
     
     
-    /* SETTERS AND GETTERS */ 
-	public LatLng getPhoneStartingPoint() {
-		return phoneStartingPoint;
-	}
-
-	public void setPhoneStartingPoint(LatLng phoneStartingPoint) {
-		this.phoneStartingPoint = phoneStartingPoint;
-	}
-	
-	protected Location getCurrentLocation() {
-		return this.locationMgr.getLastKnownLocation(providerName);
-	}
-	
-	public LocationManager getLocationManager() {
-		return locationMgr;
-	}
-	
-	public String getProviderName() {
-		return providerName;
-	}
-    
-    /* Tworzenie obiektu GoogleMap poprzez pobranie referencji do fragmentu 
-     * layoutu. Pozwolenie na ci¹g³¹ lokalizacjê (niebieska kropka).
-     */
-    protected void loadingObjectOfMainMap() {
-    	if( map == null) {
-	    	map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
-	                .getMap();
-	    	if (map != null) {
-	    		map.setMyLocationEnabled(true);
-	    	} else {
-	    		Toast.makeText(getApplicationContext(),
-	                    "Mapa siê spierdoli³a", Toast.LENGTH_SHORT)
-	                    .show();
-	    	}
-    	}
-    }
-    
-    protected void setLocationOnMap() { 
-    	
-    	/* if (minorLocalizationManager.isProviderEnabled(
-    			android.location.LocationManager.GPS_PROVIDER)) {
-		    LocationProvider = new LocationProvider(minorLocalizationManager, map);
-		    LocationProvider.setUpStartingLocation();
-		    
-		    String help = LocationProvider.getPhoneStartingPoint().toString();
-		    if (help != null) {
-		    Toast.makeText(getApplicationContext(),
-	                "geoplace:" + help, Toast.LENGTH_SHORT)
-	                .show();
-		    } else {
-		    	Toast.makeText(getApplicationContext(),
-	                "CHUJ STRZELI£ STARTING POINT", Toast.LENGTH_SHORT)
-	                .show();
-		    }
-    	}*/
-    }
-    
-    protected boolean isGPSEnabled() {
-    	if(locationMgr != null
-    		&&	locationMgr.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) {
-    		return true;
-    	}
-    	return false;
-    }
-    
-    protected void checkProviders() {
-		
-		if (!isGPSEnabled()) {
-			
-        	AlertDialog.Builder alertWindow = new AlertDialog.Builder(this);
-        	alertWindow.setTitle("GPS not enabled")
-        		.setMessage("Do you want to turn it on?")
-        		.setCancelable(true)
-        		.setPositiveButton("Yes, I do", 
-        			new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								startActivity(
-		        					new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-		        				);	
-							}
-        				} 
-        		)
-        		.setNegativeButton("No", 
-        			new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								dialog.cancel();
-								finish();
-							}
-				}); 	
-        	AlertDialog alert = alertWindow.create();
-        	alert.show();
-        	
-        	if(isGPSEnabled()) {
-        		GPSenabled = true;
-        	} else {
-        		Toast.makeText(getApplicationContext(),
-                        "GPS nie jest dostêpny", Toast.LENGTH_SHORT)
-                        .show();
-        	}
-        	
-        } else {
-        	Toast.makeText(getApplicationContext(),
-                    "GPS jest dostêpny", Toast.LENGTH_SHORT)
-                    .show();
-        }	
-	}
-
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
@@ -231,9 +129,6 @@ public class MainActivity extends ActionBarActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (!mNavigationDrawerFragment.isDrawerOpen()) {
-            // Only show items in the action bar relevant to this screen
-            // if the drawer is not showing. Otherwise, let the drawer
-            // decide what to show in the action bar.
             getMenuInflater().inflate(R.menu.main, menu);
             restoreActionBar();
             return true;
@@ -243,11 +138,8 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {	
+        if (id == R.id.action_my_start) {	
         	
         	if(isGPSEnabled()) {
         		setUpStartingLocation();
@@ -274,7 +166,6 @@ public class MainActivity extends ActionBarActivity
          loadingObjectOfMainMap();
      }
     
-
     /**
      * A placeholder fragment containing a simple view.
      */
@@ -314,9 +205,7 @@ public class MainActivity extends ActionBarActivity
                     getArguments().getInt(ARG_SECTION_NUMBER));
         }
     }
-    
-    
-
+    	/* LocalizationListener Implementation */
 
 	@Override
 	public void onLocationChanged(Location location) {
@@ -346,6 +235,99 @@ public class MainActivity extends ActionBarActivity
 	public void onProviderDisabled(String provider) {
 		// TODO Auto-generated method stub
 		
+	}
+    
+    /* ----------- SETTERS AND GETTERS ----------------------------------------- */ 
+	public LatLng getPhoneStartingPoint() {
+		return phoneStartingPoint;
+	}
+
+	public void setPhoneStartingPoint(LatLng phoneStartingPoint) {
+		this.phoneStartingPoint = phoneStartingPoint;
+	}
+	
+	protected Location getCurrentLocation() {
+		return this.locationMgr.getLastKnownLocation(providerName);
+	}
+	
+	public LocationManager getLocationManager() {
+		return locationMgr;
+	}
+	
+	public String getProviderName() {
+		return providerName;
+	}
+    
+	/* ----------- Others methods ----------------------------------------- */
+	
+    /* Tworzenie obiektu GoogleMap poprzez pobranie referencji do fragmentu 
+     * layoutu. Pozwolenie na ci¹g³¹ lokalizacjê (niebieska kropka).
+     */
+    protected void loadingObjectOfMainMap() {
+    	if( map == null) {
+	    	map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
+	                .getMap();
+	    	if (map != null) {
+	    		map.setMyLocationEnabled(true);
+	    	} else {
+	    		Toast.makeText(getApplicationContext(),
+	                    "Obiekt mapy zosta³ niepoprawnie zainicjalizowany", Toast.LENGTH_SHORT)
+	                    .show();
+	    	}
+    	}
+    }
+    
+    protected boolean isGPSEnabled() {
+    	if(locationMgr != null
+    		&&	locationMgr.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) {
+    		GPSenabled = true;
+    		return true;
+    	}
+    	GPSenabled = false;
+    	return false;
+    }
+    
+    protected void checkProviders() {
+		
+		if (!isGPSEnabled()) {
+			
+        	AlertDialog.Builder alertWindow = new AlertDialog.Builder(this);
+        	alertWindow.setTitle("GPS not enabled")
+        		.setMessage("Do you want to turn it on?")
+        		.setCancelable(true)
+        		.setPositiveButton("Yes, I do", 
+        			new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								startActivity(
+		        					new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+		        				);	
+							}
+        				} 
+        		)
+        		.setNegativeButton("No", 
+        			new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								dialog.cancel();
+								finish();
+							}
+				}); 	
+        	AlertDialog alert = alertWindow.create();
+        	alert.show();
+        	
+        	if(isGPSEnabled()) {
+        		GPSenabled = true;
+        	} else {
+        		Toast.makeText(getApplicationContext(),
+        				R.string.gps_distabled, Toast.LENGTH_SHORT)
+                        .show();
+        	}	
+        } else {
+        	Toast.makeText(getApplicationContext(),
+                    R.string.gps_enabled, Toast.LENGTH_SHORT)
+                    .show();
+        }	
 	}
 	
 protected void setUpStartingLocation() {
@@ -383,4 +365,4 @@ protected void setUpStartingLocation() {
 		return here;
 	}
 
-}
+} /* Main Activity */

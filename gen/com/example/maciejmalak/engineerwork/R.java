@@ -2040,7 +2040,7 @@ containing a value of this type.
         public static final int action_mode_bar_stub=0x7f080040;
         public static final int action_mode_close_button=0x7f080033;
         public static final int action_my_place=0x7f080058;
-        public static final int action_settings=0x7f080057;
+        public static final int action_my_start=0x7f080057;
         public static final int activity_chooser_view_content=0x7f080034;
         public static final int always=0x7f08001e;
         public static final int beginning=0x7f080023;
@@ -2231,6 +2231,7 @@ containing a value of this type.
         public static final int abc_shareactionprovider_share_with_application=0x7f060030;
         public static final int accept=0x7f060002;
         public static final int action_my_place=0x7f060038;
+        public static final int action_my_start=0x7f06003c;
         public static final int action_settings=0x7f060039;
         public static final int app_name=0x7f060032;
         /**   Text for notification shown when the Android Wear apps needs to be updated. Only shown on the wearable. [CHAR LIMIT=NONE] 
@@ -2335,6 +2336,8 @@ containing a value of this type.
         public static final int create_calendar_message=0x7f060005;
         public static final int create_calendar_title=0x7f060004;
         public static final int decline=0x7f060003;
+        public static final int gps_distabled=0x7f06003b;
+        public static final int gps_enabled=0x7f06003a;
         public static final int navigation_drawer_close=0x7f060037;
         public static final int navigation_drawer_open=0x7f060036;
         public static final int store_picture_message=0x7f060001;
