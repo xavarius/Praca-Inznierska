@@ -6,6 +6,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -47,6 +48,14 @@ public class LocationProvider implements LocationListener{
 		return this.locationMgr.getLastKnownLocation(providerName);
 	}
 	
+	public LocationManager getLocationManager() {
+		return locationMgr;
+	}
+	
+	public String getProviderName() {
+		return providerName;
+	}
+	
 	/* INTERFACE IMPLEMENTATION */
 	
 	@Override
@@ -58,8 +67,7 @@ public class LocationProvider implements LocationListener{
 			currentPositionAsMarker = googleMapInstance.addMarker(new MarkerOptions()
             .position(currentPosition)
             .title("Current Location"));
-		}
-		
+		}	
 	}
 
 	@Override
@@ -85,14 +93,14 @@ public class LocationProvider implements LocationListener{
 	protected void setUpStartingLocation() {
 		
 		currentLocation = getCurrentLocation();
-		
 		if (currentLocation != null) {
-
 			setPhoneStartingPoint(geoPointFromLocalization(currentLocation));
 			
 			startPointAsMarker = googleMapInstance.addMarker(new MarkerOptions()
             .position(phoneStartingPoint)
             .title("Starting Location"));
+			
+			googleMapInstance.animateCamera(CameraUpdateFactory.newLatLngZoom(getPhoneStartingPoint(), 18.0f));
 		}
 	}
 	
@@ -102,5 +110,4 @@ public class LocationProvider implements LocationListener{
 		LatLng here = new LatLng(latitude, longitude);
 		return here;
 	}
-
 }

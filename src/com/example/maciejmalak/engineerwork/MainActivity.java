@@ -206,6 +206,21 @@ public class MainActivity extends ActionBarActivity
         return super.onOptionsItemSelected(item);
     }
     
+    @Override
+    protected void onPause() {
+        super.onPause();
+        /*if (LocationProvider != null) {
+        	LocationProvider.getLocationManager().removeUpdates(this);
+        }*/
+      }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        /*LocationProvider.getLocationManager().requestLocationUpdates(LocationProvider.getProviderName(), 400, 1, this);
+         loadingObjectOfMainMap();*/
+      }
+    
 
     /**
      * A placeholder fragment containing a simple view.
