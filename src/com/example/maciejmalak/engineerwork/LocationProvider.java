@@ -14,25 +14,25 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class LocationProvider implements LocationListener{
 	
-	private LocationManager locationMgr;
-	private Criteria criteria;
-	private String providerName;
-	private GoogleMap googleMapInstance;
-	/* Localization */
-	private Location currentLocation;
-	private LatLng currentPosition;
-	private LatLng phoneStartingPoint;
-	private boolean GPSenabled;
-	private boolean NETenabled;
-	private Marker currentPositionAsMarker, startPointAsMarker;
+	   private LocationManager locationMgr;
+		private Criteria criteria;
+		private String providerName;
+		private GoogleMap googleMapInstance;
+		private Location currentLocation;
+		private LatLng currentPosition;
+		private LatLng phoneStartingPoint;
+		private boolean GPSenabled;
+		private boolean NETenabled;
+		private Marker currentPositionAsMarker, startPointAsMarker;
 	
 	/* Constructors */
 	public LocationProvider(LocationManager locMgr, GoogleMap map) {
 		this.locationMgr = locMgr;
 		this.googleMapInstance = map;
-		this.criteria = new Criteria();
+		//locationMgr = (LocationManager) getSystemService(LOCATION_SERVICE);
+        this.criteria = new Criteria();
 		this.criteria.setAccuracy(Criteria.ACCURACY_FINE);
-		providerName = this.locationMgr.getBestProvider(criteria, true);
+		providerName = locationMgr.getBestProvider(criteria, true);
 	}
 	
 	/* SETTERS AND GETTERS */ 

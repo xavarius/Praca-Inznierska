@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -19,12 +22,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 
 public class MainActivity extends ActionBarActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener {
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -38,16 +45,22 @@ public class MainActivity extends ActionBarActivity
     
     /* Used within Google Map */
     private static GoogleMap map;
-    private LocationManager minorLocalizationManager;
-    private LocationProvider LocationProvider;
-    private boolean GPSenabled;
+    private LocationManager locationMgr;
+	private Criteria criteria;
+	private String providerName;
+	private Location currentLocation;
+	private LatLng currentPosition;
+	private LatLng phoneStartingPoint;
+	private boolean GPSenabled;
 	private boolean NETenabled;
+	private Marker currentPositionAsMarker, startPointAsMarker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        /* ----------------- NavigationDrawer Section ----------------- */
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
@@ -57,12 +70,43 @@ public class MainActivity extends ActionBarActivity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
         
+        /* ----------------- Localization Section ----------------- */
+        
+        locationMgr = (LocationManager) getSystemService(LOCATION_SERVICE);
+        criteria = new Criteria();
+		criteria.setAccuracy(Criteria.ACCURACY_FINE);
+		providerName = locationMgr.getBestProvider(criteria, true);
+        
+		/* ----------------- Map Section ----------------- */
         try {
             loadingObjectOfMainMap();
          } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
+         }
+        
+    } /* onCreate */
+    
+    
+    /* SETTERS AND GETTERS */ 
+	public LatLng getPhoneStartingPoint() {
+		return phoneStartingPoint;
+	}
+
+	public void setPhoneStartingPoint(LatLng phoneStartingPoint) {
+		this.phoneStartingPoint = phoneStartingPoint;
+	}
+	
+	protected Location getCurrentLocation() {
+		return this.locationMgr.getLastKnownLocation(providerName);
+	}
+	
+	public LocationManager getLocationManager() {
+		return locationMgr;
+	}
+	
+	public String getProviderName() {
+		return providerName;
+	}
     
     /* Tworzenie obiektu GoogleMap poprzez pobranie referencji do fragmentu 
      * layoutu. Pozwolenie na ci¹g³¹ lokalizacjê (niebieska kropka).
@@ -83,7 +127,7 @@ public class MainActivity extends ActionBarActivity
     
     protected void setLocationOnMap() { 
     	
-    	if (minorLocalizationManager.isProviderEnabled(
+    	/* if (minorLocalizationManager.isProviderEnabled(
     			android.location.LocationManager.GPS_PROVIDER)) {
 		    LocationProvider = new LocationProvider(minorLocalizationManager, map);
 		    LocationProvider.setUpStartingLocation();
@@ -93,21 +137,23 @@ public class MainActivity extends ActionBarActivity
 		    Toast.makeText(getApplicationContext(),
 	                "geoplace:" + help, Toast.LENGTH_SHORT)
 	                .show();
+		    } else {
+		    	Toast.makeText(getApplicationContext(),
+	                "CHUJ STRZELI£ STARTING POINT", Toast.LENGTH_SHORT)
+	                .show();
 		    }
-    	}
+    	}*/
     }
     
     protected boolean isGPSEnabled() {
-    	if(minorLocalizationManager != null
-    		&&	minorLocalizationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) {
+    	if(locationMgr != null
+    		&&	locationMgr.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) {
     		return true;
     	}
     	return false;
     }
     
     protected void checkProviders() {
-		
-		minorLocalizationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 		
 		if (!isGPSEnabled()) {
 			
@@ -202,9 +248,13 @@ public class MainActivity extends ActionBarActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {	
-        	checkProviders();
-            setLocationOnMap();
-            return true;
+        	
+        	if(isGPSEnabled()) {
+        		setUpStartingLocation();
+        	} else {
+        		checkProviders();
+        	}
+        	return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -212,17 +262,17 @@ public class MainActivity extends ActionBarActivity
     @Override
     protected void onPause() {
         super.onPause();
-        /*if (LocationProvider != null) {
-        	LocationProvider.getLocationManager().removeUpdates(this);
-        }*/
+        if (locationMgr != null) {
+        	locationMgr.removeUpdates(this);
+        }
       }
 
     @Override
     protected void onResume() {
         super.onResume();
-        /*LocationProvider.getLocationManager().requestLocationUpdates(LocationProvider.getProviderName(), 400, 1, this);
-         loadingObjectOfMainMap();*/
-      }
+        locationMgr.requestLocationUpdates(getProviderName(), 400, 1, this);
+         loadingObjectOfMainMap();
+     }
     
 
     /**
@@ -264,5 +314,73 @@ public class MainActivity extends ActionBarActivity
                     getArguments().getInt(ARG_SECTION_NUMBER));
         }
     }
+    
+    
+
+
+	@Override
+	public void onLocationChanged(Location location) {
+		if (location != null) {
+			currentPosition = geoPointFromLocalization(location);
+			
+			currentPositionAsMarker = map.addMarker(new MarkerOptions()
+            .position(currentPosition)
+            .title("Current Location"));
+		}	
+		
+	}
+
+	@Override
+	public void onStatusChanged(String provider, int status, Bundle extras) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProviderEnabled(String provider) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProviderDisabled(String provider) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+protected void setUpStartingLocation() {
+		
+		currentLocation = getCurrentLocation();
+		if (currentLocation != null) {
+			setPhoneStartingPoint(geoPointFromLocalization(currentLocation));
+			
+			String help = getPhoneStartingPoint().toString();
+		    if (help != null) {
+		    Toast.makeText(getApplicationContext(),
+	                "geoplace:" + help, Toast.LENGTH_SHORT)
+	                .show();
+		    
+		    startPointAsMarker = map.addMarker(new MarkerOptions()
+            .position(phoneStartingPoint)
+            .title("Starting Location"));
+			
+			map.animateCamera(CameraUpdateFactory.newLatLngZoom(getPhoneStartingPoint(), 18.0f));
+		    
+		    } else {
+		    	Toast.makeText(getApplicationContext(),
+	                "CHUJ STRZELI£ STARTING POINT", Toast.LENGTH_SHORT)
+	                .show();
+		    }
+			
+			
+		}
+	}
+	
+	protected LatLng geoPointFromLocalization(Location loc){
+		double latitude = loc.getLatitude();
+		double longitude =  loc.getLongitude();
+		LatLng here = new LatLng(latitude, longitude);
+		return here;
+	}
 
 }
