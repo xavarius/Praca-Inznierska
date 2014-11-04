@@ -88,9 +88,12 @@ public class MainActivity extends ActionBarActivity
 		    LocationProvider = new LocationProvider(minorLocalizationManager, map);
 		    LocationProvider.setUpStartingLocation();
 		    
+		    String help = LocationProvider.getPhoneStartingPoint().toString();
+		    if (help != null) {
 		    Toast.makeText(getApplicationContext(),
-	                "geoplace:" +  LocationProvider.getPhoneStartingPoint().toString(), Toast.LENGTH_SHORT)
+	                "geoplace:" + help, Toast.LENGTH_SHORT)
 	                .show();
+		    }
     	}
     }
     
