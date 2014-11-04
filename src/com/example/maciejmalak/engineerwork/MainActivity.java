@@ -22,7 +22,6 @@ import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
@@ -43,6 +42,8 @@ public class MainActivity extends ActionBarActivity
     private static GoogleMap map;
     private LocationManager minorLocalizationManager;
     private LocationProvider LocationProvider;
+    private boolean GPSenabled;
+	private boolean NETenabled;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,32 +64,12 @@ public class MainActivity extends ActionBarActivity
          } catch (Exception e) {
             e.printStackTrace();
         }
-        
-        checkProviders();
-        setLocationOnMap();
     }
     
-    protected void setLocationOnMap() { 
-    	
-    	if (minorLocalizationManager.isProviderEnabled(
-    			android.location.LocationManager.GPS_PROVIDER)) {
-		    LocationProvider = new LocationProvider(minorLocalizationManager);
-		    LocationProvider.setUpLocation();
-		    
-		    Toast.makeText(getApplicationContext(),
-	                "geoplace:" +  LocationProvider.getCurrentGeoPlace().toString(), Toast.LENGTH_SHORT)
-	                .show();
-		    
-			map.moveCamera(CameraUpdateFactory.newLatLng(LocationProvider.getCurrentGeoPlace()));
-			map.addMarker(new MarkerOptions().position(LocationProvider.getCurrentGeoPlace())
-						.title("Yours current position"));
-    	}
-    }
-    /* Pobieramy referencjê do fragmentu mapy
-     * jeœli siê uda wyszukujemy aktualn¹ pozycjê 
+    /* Tworzenie obiektu GoogleMap poprzez pobranie referencji do fragmentu 
+     * layoutu. Pozwolenie na ci¹g³¹ lokalizacjê (niebieska kropka).
      */
-     
-    public void loadingObjectOfMainMap() {
+    protected void loadingObjectOfMainMap() {
     	if( map == null) {
 	    	map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
 	                .getMap();
@@ -101,6 +82,74 @@ public class MainActivity extends ActionBarActivity
 	    	}
     	}
     }
+    
+    protected void setLocationOnMap() { 
+    	
+    	if (minorLocalizationManager.isProviderEnabled(
+    			android.location.LocationManager.GPS_PROVIDER)) {
+		    LocationProvider = new LocationProvider(minorLocalizationManager, map);
+		    LocationProvider.setUpStartingLocation();
+		    
+		    Toast.makeText(getApplicationContext(),
+	                "geoplace:" +  LocationProvider.getPhoneStartingPoint().toString(), Toast.LENGTH_SHORT)
+	                .show();
+    	}
+    }
+    
+    protected boolean isGPSEnabled () {
+    	if(minorLocalizationManager != null
+    		&&	minorLocalizationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) {
+    		return true;
+    	}
+    	return false;
+    }
+    
+    protected void checkProviders() {
+		
+		minorLocalizationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+		
+		if (!minorLocalizationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) {
+			
+        	AlertDialog.Builder alertWindow = new AlertDialog.Builder(this);
+        	alertWindow.setTitle("GPS not enabled")
+        		.setMessage("Do you want to turn it on?")
+        		.setCancelable(true)
+        		.setPositiveButton("Yes, I do", 
+        			new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								startActivity(
+		        					new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+		        				);	
+							}
+        				} 
+        		)
+        		.setNegativeButton("No", 
+        			new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								dialog.cancel();
+								finish();
+							}
+				}); 	
+        	AlertDialog alert = alertWindow.create();
+        	alert.show();
+        	
+        	if(minorLocalizationManager
+        				.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) {
+        		GPSenabled = true;
+        	} else {
+        		Toast.makeText(getApplicationContext(),
+                        "GPS nie jest dostêpny", Toast.LENGTH_SHORT)
+                        .show();
+        	}
+        	
+        } else {
+        	Toast.makeText(getApplicationContext(),
+                    "GPS jest dostêpny", Toast.LENGTH_SHORT)
+                    .show();
+        }	
+	}
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
@@ -152,51 +201,14 @@ public class MainActivity extends ActionBarActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-        
+        if (id == R.id.action_settings) {	
+        	checkProviders();
+            setLocationOnMap();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
     
-    protected void checkProviders() {
-		
-		minorLocalizationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-		
-		if (!minorLocalizationManager.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) {
-			
-        	AlertDialog.Builder alertWindow = new AlertDialog.Builder(this);
-        	alertWindow.setTitle("GPS not enabled")
-        		.setMessage("Do you want to turn it on?")
-        		.setCancelable(true)
-        		.setPositiveButton("Yes, I do", 
-        			new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								startActivity(
-		        					new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-		        				);	
-							}
-        				} 
-        		)
-        		.setNegativeButton("No", 
-        			new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								dialog.cancel();
-								finish();
-							}
-				}); 	
-        	AlertDialog alert = alertWindow.create();
-        	alert.show();
-        	
-        } else {
-        	Toast.makeText(getApplicationContext(),
-                    "GPS dostêpny w Providers", Toast.LENGTH_SHORT)
-                    .show();
-        }
-		
-	}
 
     /**
      * A placeholder fragment containing a simple view.
