@@ -22,12 +22,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 
 public class MainActivity extends ActionBarActivity
@@ -90,7 +87,6 @@ public class MainActivity extends ActionBarActivity
         if (map != null) {
         	MarkerFactory = new MarkerMaintenance(map, getString(R.string.action_my_start), getString(R.string.curr_position));
         }
-        
     } /* onCreate */
     
     
@@ -345,7 +341,7 @@ protected void checkProvidersNET() {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
 								startActivity(
-		        					new Intent(Settings.ACTION_WIRELESS_SETTINGS)
+		        					new Intent(Settings.ACTION_DATA_ROAMING_SETTINGS)
 		        				);	
 							}
         				} 
