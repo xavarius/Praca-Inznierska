@@ -40,23 +40,19 @@ public class MainActivity extends ActionBarActivity
      */
     private CharSequence mTitle;
     
-    /* Used within Google Map */
     private static GoogleMap map;
-    
     private LocationManager locationMgr;
     private MarkerMaintenance MarkerFactory;
-    
+	private String providerName;
 	private Criteria criteria;
 	
-	private String providerName;
-	
 	private Location currentLocation;
-	
 	private LatLng currentPosition;
 	private LatLng phoneStartingPoint;
 
 	
-	/* -------- Implementation of Interfaces Section ------------------------------------------------------------ */
+	/* -------- Implementation of Interfaces Section ------------------------- */
+	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,7 +81,9 @@ public class MainActivity extends ActionBarActivity
             e.printStackTrace();
          }
         if (map != null) {
-        	MarkerFactory = new MarkerMaintenance(map, getString(R.string.action_my_start), getString(R.string.curr_position));
+        	MarkerFactory = new MarkerMaintenance(
+        							map, getString(R.string.action_my_start),
+        							getString(R.string.curr_position));
         }
     } /* onCreate */
     
