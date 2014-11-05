@@ -45,5 +45,4 @@ public class MarkerMaintenance {
 		}
 		googleMapInstance.animateCamera(CameraUpdateFactory.newLatLngZoom(position, 18.0f));
 	}
-
 }
