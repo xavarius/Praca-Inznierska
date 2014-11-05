@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">engineerwork</string>
+    <string name="app_name">Engineer Work</string>
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
@@ -11,7 +11,12 @@
     <string name="action_settings">Settings</string>
     <string name="gps_enabled">GPS is enabled</string>
     <string name="gps_distabled">GPS is not enabled</string>
+    <string name="net_enabled">Internet Connection is enabled</string>
+    <string name="net_distabled">Internet Connection is not enabled</string>
     <string name="action_my_start">My Start</string>
     <string name="curr_position">Current Position</string>
+    <string name="on_question">Do you want to turn it on?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
 </resources>

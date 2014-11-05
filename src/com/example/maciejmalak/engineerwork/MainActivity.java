@@ -140,10 +140,11 @@ public class MainActivity extends ActionBarActivity
         int id = item.getItemId();
         if (id == R.id.action_my_start) {	
         	
-        	if(isGPSEnabled()) {
+        	if(isGPSEnabled() || isNETEnabled() ) {
         		setUpStartingLocation();
         	} else {
-        		checkProviders();
+        		checkProvidersGPS();
+        		checkProvidersNET();
         	}
         	return true;
         }
@@ -281,15 +282,23 @@ public class MainActivity extends ActionBarActivity
     	return false;
     }
     
-    protected void checkProviders() {
+    protected boolean isNETEnabled() {
+    	if(locationMgr != null
+    		&&	locationMgr.isProviderEnabled(android.location.LocationManager.NETWORK_PROVIDER)) {
+    		return true;
+    	}
+    	return false;
+    }
+    
+    protected void checkProvidersGPS() {
 		
 		if (!isGPSEnabled()) {
 			
         	AlertDialog.Builder alertWindow = new AlertDialog.Builder(this);
-        	alertWindow.setTitle("GPS not enabled")
-        		.setMessage("Do you want to turn it on?")
+        	alertWindow.setTitle(R.string.gps_distabled)
+        		.setMessage(R.string.on_question)
         		.setCancelable(true)
-        		.setPositiveButton("Yes, I do", 
+        		.setPositiveButton(R.string.yes, 
         			new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
@@ -299,12 +308,11 @@ public class MainActivity extends ActionBarActivity
 							}
         				} 
         		)
-        		.setNegativeButton("No", 
+        		.setNegativeButton(R.string.no, 
         			new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
 								dialog.cancel();
-								finish();
 							}
 				}); 	
         	AlertDialog alert = alertWindow.create();
@@ -320,6 +328,48 @@ public class MainActivity extends ActionBarActivity
         } else {
         	Toast.makeText(getApplicationContext(),
                     R.string.gps_enabled, Toast.LENGTH_SHORT)
+                    .show();
+        }	
+	}
+    
+protected void checkProvidersNET() {
+		
+		if (!isNETEnabled()) {
+			
+			AlertDialog.Builder alertWindow = new AlertDialog.Builder(this);
+        	alertWindow.setTitle(R.string.net_distabled)
+        		.setMessage(R.string.on_question)
+        		.setCancelable(true)
+        		.setPositiveButton(R.string.yes, 
+        			new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								startActivity(
+		        					new Intent(Settings.ACTION_WIRELESS_SETTINGS)
+		        				);	
+							}
+        				} 
+        		)
+        		.setNegativeButton(R.string.no, 
+        			new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								dialog.cancel();
+							}
+				}); 	
+        	AlertDialog alert = alertWindow.create();
+        	alert.show();
+        	
+        	if(isNETEnabled()) {
+        		
+        	} else {
+        		Toast.makeText(getApplicationContext(),
+        				R.string.net_distabled, Toast.LENGTH_SHORT)
+                        .show();
+        	}	
+        } else {
+        	Toast.makeText(getApplicationContext(),
+                    R.string.net_enabled, Toast.LENGTH_SHORT)
                     .show();
         }	
 	}
