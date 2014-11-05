@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -44,11 +45,12 @@ public class MainActivity extends ActionBarActivity
     private LocationManager locationMgr;
     private MarkerMaintenance MarkerFactory;
 	private String providerName;
+	private float ACCURACY;
 	private Criteria criteria;
 	
 	private Location currentLocation;
-	private LatLng currentPosition;
-	private LatLng phoneStartingPoint;
+	private Location currentPositionOnMap;
+	private Location phoneStartingPoint;
 
 	
 	/* -------- Implementation of Interfaces Section ------------------------- */
@@ -204,8 +206,7 @@ public class MainActivity extends ActionBarActivity
 	@Override
 	public void onLocationChanged(Location location) {
 		if (location != null) {
-			currentPosition = geoPointFromLocalization(location);
-			MarkerFactory.registerMarkerOnMap(getString(R.string.curr_position),currentPosition);
+			MarkerFactory.registerMarkerOnMap(getString(R.string.curr_position),location);
 		}	
 		
 	}
@@ -229,16 +230,18 @@ public class MainActivity extends ActionBarActivity
 	}
     
     /* ----------- SETTERS AND GETTERS ----------------------------------------- */ 
-	public LatLng getPhoneStartingPoint() {
+	public Location getPhoneStartingPoint() {
 		return phoneStartingPoint;
 	}
 
-	public void setPhoneStartingPoint(LatLng phoneStartingPoint) {
+	public void setPhoneStartingPoint(Location phoneStartingPoint) {
 		this.phoneStartingPoint = phoneStartingPoint;
 	}
 	
 	protected Location getCurrentLocation() {
-		return this.locationMgr.getLastKnownLocation(providerName);
+		Location loc = locationMgr.getLastKnownLocation(providerName);
+		float ACCURACY = loc.getAccuracy();
+		return loc;
 	}
 	
 	public LocationManager getLocationManager() {
@@ -256,15 +259,9 @@ public class MainActivity extends ActionBarActivity
      */
     protected void loadingObjectOfMainMap() {
     	if( map == null) {
+    		
 	    	map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
 	                .getMap();
-	    	if (map != null) {
-	    		map.setMyLocationEnabled(true);
-	    	} else {
-	    		Toast.makeText(getApplicationContext(),
-	                    "Obiekt mapy zosta³ niepoprawnie zainicjalizowany", Toast.LENGTH_SHORT)
-	                    .show();
-	    	}
     	}
     }
     
@@ -372,21 +369,14 @@ protected void setUpStartingLocation() {
 		
 		currentLocation = getCurrentLocation();
 		if (currentLocation != null) {
-			setPhoneStartingPoint(geoPointFromLocalization(currentLocation));
+			setPhoneStartingPoint(currentLocation);
 			
 		    Toast.makeText(getApplicationContext(),
 	                "geoplace:" + getPhoneStartingPoint().toString(), Toast.LENGTH_SHORT)
 	                .show();
-		   
+		    
 		    MarkerFactory.registerMarkerOnMap(getString(R.string.action_my_start), getPhoneStartingPoint());
 		}
-	}
-	
-	protected LatLng geoPointFromLocalization(Location loc){
-		double latitude = loc.getLatitude();
-		double longitude =  loc.getLongitude();
-		LatLng here = new LatLng(latitude, longitude);
-		return here;
 	}
 
 } /* Main Activity */
