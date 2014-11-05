@@ -47,6 +47,7 @@ public class MainActivity extends ActionBarActivity
     private static GoogleMap map;
     
     private LocationManager locationMgr;
+    private MarkerMaintenance MarkerFactory;
     
 	private Criteria criteria;
 	
@@ -56,11 +57,6 @@ public class MainActivity extends ActionBarActivity
 	
 	private LatLng currentPosition;
 	private LatLng phoneStartingPoint;
-	
-	private boolean GPSenabled;
-	private boolean NETenabled;
-	
-	private Marker currentPositionAsMarker, startPointAsMarker;
 
 	
 	/* -------- Implementation of Interfaces Section ------------------------------------------------------------ */
@@ -91,6 +87,9 @@ public class MainActivity extends ActionBarActivity
          } catch (Exception e) {
             e.printStackTrace();
          }
+        if (map != null) {
+        	MarkerFactory = new MarkerMaintenance(map, getString(R.string.action_my_start), getString(R.string.curr_position));
+        }
         
     } /* onCreate */
     
@@ -211,10 +210,7 @@ public class MainActivity extends ActionBarActivity
 	public void onLocationChanged(Location location) {
 		if (location != null) {
 			currentPosition = geoPointFromLocalization(location);
-			
-			currentPositionAsMarker = map.addMarker(new MarkerOptions()
-            .position(currentPosition)
-            .title("Current Location"));
+			MarkerFactory.registerMarkerOnMap(getString(R.string.curr_position),currentPosition);
 		}	
 		
 	}
@@ -280,10 +276,8 @@ public class MainActivity extends ActionBarActivity
     protected boolean isGPSEnabled() {
     	if(locationMgr != null
     		&&	locationMgr.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) {
-    		GPSenabled = true;
     		return true;
     	}
-    	GPSenabled = false;
     	return false;
     }
     
@@ -317,7 +311,7 @@ public class MainActivity extends ActionBarActivity
         	alert.show();
         	
         	if(isGPSEnabled()) {
-        		GPSenabled = true;
+        		
         	} else {
         		Toast.makeText(getApplicationContext(),
         				R.string.gps_distabled, Toast.LENGTH_SHORT)
@@ -336,25 +330,11 @@ protected void setUpStartingLocation() {
 		if (currentLocation != null) {
 			setPhoneStartingPoint(geoPointFromLocalization(currentLocation));
 			
-			String help = getPhoneStartingPoint().toString();
-		    if (help != null) {
 		    Toast.makeText(getApplicationContext(),
-	                "geoplace:" + help, Toast.LENGTH_SHORT)
+	                "geoplace:" + getPhoneStartingPoint().toString(), Toast.LENGTH_SHORT)
 	                .show();
-		    
-		    startPointAsMarker = map.addMarker(new MarkerOptions()
-            .position(phoneStartingPoint)
-            .title("Starting Location"));
-			
-			map.animateCamera(CameraUpdateFactory.newLatLngZoom(getPhoneStartingPoint(), 18.0f));
-		    
-		    } else {
-		    	Toast.makeText(getApplicationContext(),
-	                "CHUJ STRZELI£ STARTING POINT", Toast.LENGTH_SHORT)
-	                .show();
-		    }
-			
-			
+		   
+		    MarkerFactory.registerMarkerOnMap(getString(R.string.action_my_start), getPhoneStartingPoint());
 		}
 	}
 	

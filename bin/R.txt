@@ -598,6 +598,7 @@ int string common_signin_button_text 0x7f06001f
 int string common_signin_button_text_long 0x7f060020
 int string create_calendar_message 0x7f060005
 int string create_calendar_title 0x7f060004
+int string curr_position 0x7f06003d
 int string decline 0x7f060003
 int string gps_distabled 0x7f06003b
 int string gps_enabled 0x7f06003a

@@ -12,5 +12,6 @@
     <string name="gps_enabled">GPS is enabled</string>
     <string name="gps_distabled">GPS is not enabled</string>
     <string name="action_my_start">My Start</string>
+    <string name="curr_position">Current Position</string>
 
 </resources>

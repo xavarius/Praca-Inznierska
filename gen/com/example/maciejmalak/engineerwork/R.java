@@ -2335,6 +2335,7 @@ containing a value of this type.
         public static final int common_signin_button_text_long=0x7f060020;
         public static final int create_calendar_message=0x7f060005;
         public static final int create_calendar_title=0x7f060004;
+        public static final int curr_position=0x7f06003d;
         public static final int decline=0x7f060003;
         public static final int gps_distabled=0x7f06003b;
         public static final int gps_enabled=0x7f06003a;
