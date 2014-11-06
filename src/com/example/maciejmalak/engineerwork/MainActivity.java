@@ -45,7 +45,6 @@ public class MainActivity extends ActionBarActivity
     private LocationManager locationMgr;
     private MarkerMaintenance MarkerFactory;
 	private String providerName;
-	private float ACCURACY;
 	private Criteria criteria;
 	
 	private Location currentLocation;
@@ -240,7 +239,6 @@ public class MainActivity extends ActionBarActivity
 	
 	protected Location getCurrentLocation() {
 		Location loc = locationMgr.getLastKnownLocation(providerName);
-		float ACCURACY = loc.getAccuracy();
 		return loc;
 	}
 	
@@ -262,6 +260,7 @@ public class MainActivity extends ActionBarActivity
     		
 	    	map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
 	                .getMap();
+	    	map.setMyLocationEnabled(true);
     	}
     }
     

@@ -30,24 +30,28 @@ public class MarkerMaintenance {
 		this.startPointKey = resourceStartPosition;
 	}
 	
-	public void registerMarkerOnMap(String key, Location position) {
-		LatLng pos = geoPointFromLocalization(position);	
+	public void registerMarkerOnMap(String key, Location position) {	
+		LatLng pos = geoPointFromLocalization(position);
 		if (allMarkersVisibleOnMap.get(key) != null ) {
 			allMarkersVisibleOnMap.get(key).setPosition(pos);
 		} else {
 			Marker currentRetriveMarker 
-				= googleMapInstance.addMarker(new MarkerOptions()
-		        .position(pos)
-		        .title(key)
-		        .snippet(key)
-		        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+				= googleMapInstance.addMarker(getMarkerOptions(key, pos));
 			allMarkersVisibleOnMap.put(key, currentRetriveMarker);
 		}
 		
 		if ( key == currentPointKey ) {
-			settingCircle(pos,position.getAccuracy());
+			settingCircle(pos ,position.getAccuracy());
 			googleMapInstance.animateCamera(CameraUpdateFactory.newLatLngZoom(pos, 18.0f));
 		}
+	}
+	
+	public MarkerOptions getMarkerOptions(String key, LatLng pos) {
+		return new MarkerOptions()
+	        .position(pos)
+	        .title(key)
+	        .snippet(key)
+	        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
 	}
 	
 	public void removeSelectedMarkerFromMap(String key) {
@@ -71,9 +75,12 @@ public class MarkerMaintenance {
 		
 		CircleOptions circleOptions = new CircleOptions()
 		    .center(center)
-		    .radius(rad); // In meters
+		    .radius(rad); 
 
 		 circle = googleMapInstance.addCircle(circleOptions);
+	}
+	public void removingCircle() {
+		circle.remove();
 	}
 	
 	protected LatLng geoPointFromLocalization(Location loc){
