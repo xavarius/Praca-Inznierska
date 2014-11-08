@@ -2076,6 +2076,7 @@ containing a value of this type.
         public static final int list_item=0x7f080038;
         public static final int map=0x7f080054;
         public static final int match_parent=0x7f08000c;
+        public static final int meet_place=0x7f080059;
         public static final int middle=0x7f080024;
         public static final int monochrome=0x7f080013;
         public static final int navigation_drawer=0x7f080055;
@@ -2339,12 +2340,13 @@ containing a value of this type.
         public static final int decline=0x7f060003;
         public static final int gps_distabled=0x7f06003b;
         public static final int gps_enabled=0x7f06003a;
+        public static final int meet_place=0x7f060040;
         public static final int navigation_drawer_close=0x7f060037;
         public static final int navigation_drawer_open=0x7f060036;
         public static final int net_distabled=0x7f06003d;
         public static final int net_enabled=0x7f06003c;
-        public static final int no=0x7f060042;
-        public static final int on_question=0x7f060040;
+        public static final int no=0x7f060043;
+        public static final int on_question=0x7f060041;
         public static final int store_picture_message=0x7f060001;
         public static final int store_picture_title=0x7f060000;
         public static final int title_section1=0x7f060033;
@@ -2354,7 +2356,7 @@ containing a value of this type.
          available or up-to-date 
          */
         public static final int wallet_buy_button_place_holder=0x7f060022;
-        public static final int yes=0x7f060041;
+        public static final int yes=0x7f060042;
     }
     public static final class style {
         /** 

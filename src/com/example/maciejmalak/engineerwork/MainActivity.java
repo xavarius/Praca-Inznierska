@@ -86,6 +86,10 @@ public class MainActivity extends ActionBarActivity
         							map, getString(R.string.action_my_start),
         							getString(R.string.curr_position));
         }
+        
+        /* Asking user for enable Internet connection */
+        checkProvidersNET();
+        checkProvidersGPS();
     } /* onCreate */
     
     
@@ -135,13 +139,14 @@ public class MainActivity extends ActionBarActivity
         int id = item.getItemId();
         if (id == R.id.action_my_start) {	
         	
-        	if(isGPSEnabled() || isNETEnabled() ) {
+        	if(isGPSEnabled()) {
         		setUpStartingLocation();
         	} else {
         		checkProvidersGPS();
-        		checkProvidersNET();
         	}
         	return true;
+        } else if (id == R.id.meet_place) {
+        	MarkerFactory.setMeetingPlace();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -206,8 +211,8 @@ public class MainActivity extends ActionBarActivity
 	public void onLocationChanged(Location location) {
 		if (location != null) {
 			MarkerFactory.registerMarkerOnMap(getString(R.string.curr_position),location);
+			GeoMidPointAlgorithm.registerPositions(getString(R.string.curr_position),location);
 		}	
-		
 	}
 
 	@Override
@@ -322,7 +327,7 @@ public class MainActivity extends ActionBarActivity
         }	
 	}
     
-protected void checkProvidersNET() {
+    protected void checkProvidersNET() {
 		
 		if (!isNETEnabled()) {
 			
@@ -364,17 +369,21 @@ protected void checkProvidersNET() {
         }	
 	}
 	
-protected void setUpStartingLocation() {
+    protected void setUpStartingLocation() {
 		
 		currentLocation = getCurrentLocation();
 		if (currentLocation != null) {
 			setPhoneStartingPoint(currentLocation);
 			
 		    Toast.makeText(getApplicationContext(),
-	                "geoplace:" + getPhoneStartingPoint().toString(), Toast.LENGTH_SHORT)
+	                "Start Location:" + 
+	                		getPhoneStartingPoint().toString(), Toast.LENGTH_SHORT)
 	                .show();
 		    
-		    MarkerFactory.registerMarkerOnMap(getString(R.string.action_my_start), getPhoneStartingPoint());
+		    MarkerFactory.registerMarkerOnMap(getString(R.string.action_my_start), 
+		    									getPhoneStartingPoint());
+		    GeoMidPointAlgorithm.registerPositions(getString(R.string.action_my_start), 
+		    										getPhoneStartingPoint());
 		}
 	}
 

@@ -18,12 +18,15 @@ public class MarkerMaintenance {
 	private GoogleMap googleMapInstance;
 	Circle circle;
 	
-	/* dlatego, ¿e R mo¿na pobieraæ tylko z Services albo Activity */
+	/* We need to store those keys value
+	 * because Resources (R) are only
+	 * accessible from Activity class
+	 */
 	private String startPointKey,
 					currentPointKey;
 	
 	private HashMap<String, Marker> allMarkersVisibleOnMap = new HashMap<String, Marker>();
-	
+
 	public MarkerMaintenance(GoogleMap map, String resourceStartPosition, String resourceCurrPosition){
 		this.googleMapInstance = map;
 		this.currentPointKey = resourceCurrPosition;
@@ -31,7 +34,8 @@ public class MarkerMaintenance {
 	}
 	
 	public void registerMarkerOnMap(String key, Location position) {	
-		LatLng pos = geoPointFromLocalization(position);
+		LatLng pos = LocalizationCalculationHelper.geoPointFromLocalization(position);
+		
 		if (allMarkersVisibleOnMap.get(key) != null ) {
 			allMarkersVisibleOnMap.get(key).setPosition(pos);
 		} else {
@@ -50,7 +54,7 @@ public class MarkerMaintenance {
 		return new MarkerOptions()
 	        .position(pos)
 	        .title(key)
-	        .snippet(key)
+	        .snippet(pos.toString())
 	        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
 	}
 	
@@ -79,15 +83,23 @@ public class MarkerMaintenance {
 
 		 circle = googleMapInstance.addCircle(circleOptions);
 	}
+	
 	public void removingCircle() {
 		circle.remove();
 	}
 	
-	protected LatLng geoPointFromLocalization(Location loc){
-		double latitude = loc.getLatitude();
-		double longitude =  loc.getLongitude();
-		LatLng here = new LatLng(latitude, longitude);
-		return here;
+	public void setMeetingPlace() {
+		removeMeetingPlaceMarkerFromMap();
+		Marker currentRetriveMarker 
+			= googleMapInstance.addMarker(getMarkerOptions("Meeting Place",
+								GeoMidPointAlgorithm.geographicMidpointAlgorithm()));
+		allMarkersVisibleOnMap.put("Meeting Place", currentRetriveMarker);
+		
 	}
 	
+	public void removeMeetingPlaceMarkerFromMap() {
+		if (allMarkersVisibleOnMap.get("Meeting Place") != null) {
+			allMarkersVisibleOnMap.get("Meeting Place").remove();
+		}
+	}
 }
