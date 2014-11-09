@@ -2,12 +2,15 @@ package com.example.maciejmalak.engineerwork;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
@@ -23,9 +26,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.LatLng;
 
 
 public class MainActivity extends ActionBarActivity
@@ -211,7 +212,7 @@ public class MainActivity extends ActionBarActivity
 	public void onLocationChanged(Location location) {
 		if (location != null) {
 			MarkerFactory.registerMarkerOnMap(getString(R.string.curr_position),location);
-			GeoMidPointAlgorithm.registerPositions(getString(R.string.curr_position),location);
+			//GeoMidPointAlgorithm.registerPositions(getString(R.string.curr_position),location);
 		}	
 	}
 
@@ -276,19 +277,21 @@ public class MainActivity extends ActionBarActivity
     	}
     	return false;
     }
-    
-    protected boolean isNETEnabled() {
-    	if(locationMgr != null
-    		&&	locationMgr.isProviderEnabled(android.location.LocationManager.NETWORK_PROVIDER)) {
-    		return true;
-    	}
-    	return false;
+
+    public boolean isInternetEnabled() {
+        ConnectivityManager cManager 
+        		=(ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cManager.getActiveNetworkInfo();
+        
+        if (netInfo != null && netInfo.isConnectedOrConnecting()) {
+            return true;
+        }
+        return false;
     }
     
     protected void checkProvidersGPS() {
 		
-		if (!isGPSEnabled()) {
-			
+		if (!isGPSEnabled()) {	
         	AlertDialog.Builder alertWindow = new AlertDialog.Builder(this);
         	alertWindow.setTitle(R.string.gps_distabled)
         		.setMessage(R.string.on_question)
@@ -311,15 +314,7 @@ public class MainActivity extends ActionBarActivity
 							}
 				}); 	
         	AlertDialog alert = alertWindow.create();
-        	alert.show();
-        	
-        	if(isGPSEnabled()) {
-        		
-        	} else {
-        		Toast.makeText(getApplicationContext(),
-        				R.string.gps_distabled, Toast.LENGTH_SHORT)
-                        .show();
-        	}	
+        	alert.show();	
         } else {
         	Toast.makeText(getApplicationContext(),
                     R.string.gps_enabled, Toast.LENGTH_SHORT)
@@ -329,7 +324,7 @@ public class MainActivity extends ActionBarActivity
     
     protected void checkProvidersNET() {
 		
-		if (!isNETEnabled()) {
+		if (!isInternetEnabled()) {
 			
 			AlertDialog.Builder alertWindow = new AlertDialog.Builder(this);
         	alertWindow.setTitle(R.string.net_distabled)
@@ -353,15 +348,7 @@ public class MainActivity extends ActionBarActivity
 							}
 				}); 	
         	AlertDialog alert = alertWindow.create();
-        	alert.show();
-        	
-        	if(isNETEnabled()) {
-        		
-        	} else {
-        		Toast.makeText(getApplicationContext(),
-        				R.string.net_distabled, Toast.LENGTH_SHORT)
-                        .show();
-        	}	
+        	alert.show();	
         } else {
         	Toast.makeText(getApplicationContext(),
                     R.string.net_enabled, Toast.LENGTH_SHORT)
@@ -384,6 +371,26 @@ public class MainActivity extends ActionBarActivity
 		    									getPhoneStartingPoint());
 		    GeoMidPointAlgorithm.registerPositions(getString(R.string.action_my_start), 
 		    										getPhoneStartingPoint());
+		    
+		    String s = "Some location";
+		    Location l = new Location(s);
+		    l.setLatitude(52.07964703);
+		    l.setLongitude(16.03394903);
+		    
+		    MarkerFactory.registerMarkerOnMap(s,l);
+		    GeoMidPointAlgorithm.registerPositions(s,l);
+		    
+		    s = "other loc";
+		    l.setLatitude(50.07964703);
+		    l.setLongitude(16.59);
+		    MarkerFactory.registerMarkerOnMap(s,l);
+		    GeoMidPointAlgorithm.registerPositions(s,l);
+		    
+		    s = "other loc1";
+		    l.setLatitude(51.0);
+		    l.setLongitude(15.09999);
+		    MarkerFactory.registerMarkerOnMap(s,l);
+		    GeoMidPointAlgorithm.registerPositions(s,l);
 		}
 	}
 

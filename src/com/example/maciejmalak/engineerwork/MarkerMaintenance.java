@@ -15,6 +15,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MarkerMaintenance {
 	
+	private final static String MEET = "Meeting Place";
+	
 	private GoogleMap googleMapInstance;
 	Circle circle;
 	
@@ -91,15 +93,15 @@ public class MarkerMaintenance {
 	public void setMeetingPlace() {
 		removeMeetingPlaceMarkerFromMap();
 		Marker currentRetriveMarker 
-			= googleMapInstance.addMarker(getMarkerOptions("Meeting Place",
+			= googleMapInstance.addMarker(getMarkerOptions(MEET,
 								GeoMidPointAlgorithm.geographicMidpointAlgorithm()));
-		allMarkersVisibleOnMap.put("Meeting Place", currentRetriveMarker);
+		allMarkersVisibleOnMap.put(MEET, currentRetriveMarker);
 		
 	}
 	
 	public void removeMeetingPlaceMarkerFromMap() {
-		if (allMarkersVisibleOnMap.get("Meeting Place") != null) {
-			allMarkersVisibleOnMap.get("Meeting Place").remove();
+		if (allMarkersVisibleOnMap.get(MEET) != null) {
+			allMarkersVisibleOnMap.get(MEET).remove();
 		}
 	}
 }

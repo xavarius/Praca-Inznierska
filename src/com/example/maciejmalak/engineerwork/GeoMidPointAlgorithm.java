@@ -15,7 +15,6 @@ public class GeoMidPointAlgorithm {
 												new HashMap<String, CartesiansCoordinates>();
 	
 	private static double LAT, LNG;
-	
 	public static LatLng geographicMidpoint,
 						 centerMinDistance,
 						 averageLatLng;
@@ -28,14 +27,16 @@ public class GeoMidPointAlgorithm {
 	}
 	
 	public static LatLng geographicMidpointAlgorithm() {
-		int i = 0;
+		int amoutOfPositions = 0;
 		double
 			avrX = 0, 
 			avrY = 0,
 			avrZ = 0;
 		
-		settingContexOfCartesianCoordinates();
+		/* Converting stored positions to Cartesian Coordinates */
+		settingContexOfCartesianCoordinatesHashMap();
 		
+		/* Counting center of gravity - geo midpoint */
 		for(Entry<String, CartesiansCoordinates> entry : 
 			allPositionsAsCartesianCoordinates.entrySet()) {
 			CartesiansCoordinates coordinates = entry.getValue();
@@ -43,21 +44,25 @@ public class GeoMidPointAlgorithm {
 			avrX+=coordinates.getX();
 			avrY+=coordinates.getY();
 			avrZ+=coordinates.getZ();
-		    i++;
+			amoutOfPositions++;
 		}
 		
-		avrX = avrX/i;
-		avrY = avrY/i;
-		avrZ = avrZ/i;
+		avrX = avrX/amoutOfPositions;
+		avrY = avrY/amoutOfPositions;
+		avrZ = avrZ/amoutOfPositions;
 	
+		/* Here LNG and LAT are radians.
+		 * We ought to convert them first to degrees 
+		 * and next to LatLng android object
+		 */
 		double hyp = Math.sqrt((avrX*avrX)+(avrY*avrY));
 		LNG = Math.atan2(avrY, avrX);
 		LAT = Math.atan2(avrZ, hyp);
 		
-		return convertToLatLng(LAT,LNG);
+		return convertRadiansToDegreesAndThenToLatLng(LAT,LNG);
 	}
 	
-	protected static void settingContexOfCartesianCoordinates() {
+	protected static void settingContexOfCartesianCoordinatesHashMap() {
 		
 		for(Entry<String, LatLng> entry : allPeoplePositions.entrySet()) {
 		    String key = entry.getKey();
@@ -80,7 +85,7 @@ public class GeoMidPointAlgorithm {
 		return new CartesiansCoordinates(x,y,z);
 	}
 	
-	protected static LatLng convertToLatLng(double lat, double lng) {
+	protected static LatLng convertRadiansToDegreesAndThenToLatLng(double lat, double lng) {
 		return new LatLng(convertToDegrees(lat), convertToDegrees(lng));
 	}
 	
