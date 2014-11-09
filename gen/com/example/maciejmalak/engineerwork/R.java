@@ -2081,6 +2081,7 @@ containing a value of this type.
         public static final int monochrome=0x7f080013;
         public static final int navigation_drawer=0x7f080055;
         public static final int never=0x7f08001c;
+        public static final int new_point=0x7f08005a;
         public static final int none=0x7f080000;
         public static final int normal=0x7f080001;
         public static final int production=0x7f080007;
@@ -2345,6 +2346,7 @@ containing a value of this type.
         public static final int navigation_drawer_open=0x7f060036;
         public static final int net_distabled=0x7f06003d;
         public static final int net_enabled=0x7f06003c;
+        public static final int new_point=0x7f060044;
         public static final int no=0x7f060043;
         public static final int on_question=0x7f060041;
         public static final int store_picture_message=0x7f060001;

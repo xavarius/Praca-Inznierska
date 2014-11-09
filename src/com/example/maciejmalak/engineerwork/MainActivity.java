@@ -49,7 +49,6 @@ public class MainActivity extends ActionBarActivity
 	private Criteria criteria;
 	
 	private Location currentLocation;
-	private Location currentPositionOnMap;
 	private Location phoneStartingPoint;
 
 	
@@ -117,7 +116,8 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
-    public void restoreActionBar() {
+    @SuppressWarnings("deprecation")
+	public void restoreActionBar() {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayShowTitleEnabled(true);
@@ -148,6 +148,8 @@ public class MainActivity extends ActionBarActivity
         	return true;
         } else if (id == R.id.meet_place) {
         	MarkerFactory.setMeetingPlace();
+        } else if (id == R.id.new_point) {
+        	navigateToNewPointActivity();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -393,5 +395,9 @@ public class MainActivity extends ActionBarActivity
 		    GeoMidPointAlgorithm.registerPositions(s,l);
 		}
 	}
+    
+    protected void navigateToNewPointActivity() {
+    	
+    }
 
 } /* Main Activity */
