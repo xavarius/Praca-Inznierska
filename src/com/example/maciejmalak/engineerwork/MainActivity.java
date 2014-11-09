@@ -397,7 +397,8 @@ public class MainActivity extends ActionBarActivity
 	}
     
     protected void navigateToNewPointActivity() {
-    	
+    	Intent newPointIntent = new Intent(this, NewPoint.class);
+    	startActivity(newPointIntent);
     }
 
 } /* Main Activity */

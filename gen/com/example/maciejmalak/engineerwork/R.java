@@ -2041,6 +2041,7 @@ containing a value of this type.
         public static final int action_mode_close_button=0x7f080033;
         public static final int action_my_place=0x7f080058;
         public static final int action_my_start=0x7f080057;
+        public static final int action_settings=0x7f08005b;
         public static final int activity_chooser_view_content=0x7f080034;
         public static final int always=0x7f08001e;
         public static final int beginning=0x7f080023;
@@ -2169,13 +2170,16 @@ containing a value of this type.
         public static final int abc_search_view=0x7f030015;
         public static final int abc_simple_dropdown_hint=0x7f030016;
         public static final int activity_main=0x7f030017;
-        public static final int fragment_main=0x7f030018;
-        public static final int fragment_navigation_drawer=0x7f030019;
-        public static final int support_simple_spinner_dropdown_item=0x7f03001a;
+        public static final int activity_new_point=0x7f030018;
+        public static final int fragment_main=0x7f030019;
+        public static final int fragment_navigation_drawer=0x7f03001a;
+        public static final int fragment_new_point=0x7f03001b;
+        public static final int support_simple_spinner_dropdown_item=0x7f03001c;
     }
     public static final class menu {
         public static final int global=0x7f0c0000;
         public static final int main=0x7f0c0001;
+        public static final int new_point=0x7f0c0002;
     }
     public static final class string {
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 
@@ -2351,6 +2355,7 @@ containing a value of this type.
         public static final int on_question=0x7f060041;
         public static final int store_picture_message=0x7f060001;
         public static final int store_picture_title=0x7f060000;
+        public static final int title_activity_new_point=0x7f060045;
         public static final int title_section1=0x7f060033;
         public static final int title_section2=0x7f060034;
         public static final int title_section3=0x7f060035;

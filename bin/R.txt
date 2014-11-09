@@ -443,6 +443,7 @@ int id action_mode_bar_stub 0x7f080040
 int id action_mode_close_button 0x7f080033
 int id action_my_place 0x7f080058
 int id action_my_start 0x7f080057
+int id action_settings 0x7f08005b
 int id activity_chooser_view_content 0x7f080034
 int id always 0x7f08001e
 int id beginning 0x7f080023
@@ -545,11 +546,14 @@ int layout abc_search_dropdown_item_icons_2line 0x7f030014
 int layout abc_search_view 0x7f030015
 int layout abc_simple_dropdown_hint 0x7f030016
 int layout activity_main 0x7f030017
-int layout fragment_main 0x7f030018
-int layout fragment_navigation_drawer 0x7f030019
-int layout support_simple_spinner_dropdown_item 0x7f03001a
+int layout activity_new_point 0x7f030018
+int layout fragment_main 0x7f030019
+int layout fragment_navigation_drawer 0x7f03001a
+int layout fragment_new_point 0x7f03001b
+int layout support_simple_spinner_dropdown_item 0x7f03001c
 int menu global 0x7f0c0000
 int menu main 0x7f0c0001
+int menu new_point 0x7f0c0002
 int string abc_action_bar_home_description 0x7f060024
 int string abc_action_bar_home_description_format 0x7f060027
 int string abc_action_bar_home_subtitle_description_format 0x7f060028
@@ -614,6 +618,7 @@ int string no 0x7f060043
 int string on_question 0x7f060041
 int string store_picture_message 0x7f060001
 int string store_picture_title 0x7f060000
+int string title_activity_new_point 0x7f060045
 int string title_section1 0x7f060033
 int string title_section2 0x7f060034
 int string title_section3 0x7f060035

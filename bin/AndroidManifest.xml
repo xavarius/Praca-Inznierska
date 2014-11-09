@@ -7,7 +7,7 @@
     <uses-sdk
         android:minSdkVersion="11"
         android:targetSdkVersion="21" />
-    
+
     <permission
         android:name="ccom.example.maciejmalak.engineerwork.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
@@ -31,22 +31,30 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name" 
-            android:configChanges="orientation|screenSize">
+            android:configChanges="orientation|screenSize"
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
+
         <meta-data
-		    android:name="com.google.android.gms.version"
-		    android:value="@integer/google_play_services_version" />
-        
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyAnWTUXFLuv2dUrPxXehSB9GR72cItHSdE" />
+
+        <activity
+            android:name=".NewPoint"
+            android:label="@string/title_activity_new_point"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.maciejmalak.engineerwork.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

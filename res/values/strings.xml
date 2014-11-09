@@ -20,5 +20,6 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="new_point">Add Point</string>
+    <string name="title_activity_new_point">Add New Point Panel</string>
 
 </resources>
