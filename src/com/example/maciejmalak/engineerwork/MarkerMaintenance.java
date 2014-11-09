@@ -86,9 +86,7 @@ public class MarkerMaintenance {
 		 circle = googleMapInstance.addCircle(circleOptions);
 	}
 	
-	public void removingCircle() {
-		circle.remove();
-	}
+	public void removingCircle() { circle.remove(); }
 	
 	public void setMeetingPlace() {
 		removeMeetingPlaceMarkerFromMap();
@@ -96,7 +94,6 @@ public class MarkerMaintenance {
 			= googleMapInstance.addMarker(getMarkerOptions(MEET,
 								GeoMidPointAlgorithm.geographicMidpointAlgorithm()));
 		allMarkersVisibleOnMap.put(MEET, currentRetriveMarker);
-		
 	}
 	
 	public void removeMeetingPlaceMarkerFromMap() {
