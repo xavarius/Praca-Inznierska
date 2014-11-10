@@ -22,5 +22,7 @@
     <string name="new_point">Add Point</string>
     <string name="title_activity_new_point">Add New Point Panel</string>
     <string name="input_place">Input address/geopoint</string>
-	<string name="save">Save</string>
+	<string name="save">Save Place</string>
+	<string name="done_adding_places">Done Adding Places</string>
+	
 </resources>

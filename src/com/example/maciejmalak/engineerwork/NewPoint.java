@@ -10,6 +10,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -78,7 +79,7 @@ public class NewPoint extends ActionBarActivity {
 		getLoc.getLocationFromAddress(et.getText().toString());
 	}
 	
-	public void doneAddingPlaces( View view) {
+	public void doneAddingPlaces(View view) {
 		if (allPointsProvidedInEditText == null) {
 			setResult(RESULT_CANCELED);
 			finish();

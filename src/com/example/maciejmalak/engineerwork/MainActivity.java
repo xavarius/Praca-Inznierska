@@ -1,5 +1,8 @@
 package com.example.maciejmalak.engineerwork;
 
+import java.util.HashMap;
+import java.util.Map.Entry;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -219,9 +222,17 @@ public class MainActivity extends ActionBarActivity
             	if(extras !=null) {
 	            	Toast.makeText(getApplicationContext(),
 	            			"z aktywnosci: " + extras.getString("nazwa") +
-	            			extras.getSerializable("kolekcja").toString()
+	            			extras.getSerializable("collectionOfPlaces").toString()
 	            			, Toast.LENGTH_SHORT)
 	                        .show();
+	            	
+	            	HashMap<String, Location> allPointsProvidedInNewPoint
+	            				= (HashMap<String, Location>) 
+	            				extras.getSerializable("collectionOfPlaces");
+	            	
+	            	if (allPointsProvidedInNewPoint != null) {
+	            		storeLocalizationsFromNewPointToMap(allPointsProvidedInNewPoint);
+	            	}
             	}
             } else if (resultCode == RESULT_CANCELED) {
             	Toast.makeText(getApplicationContext(),
@@ -231,13 +242,12 @@ public class MainActivity extends ActionBarActivity
         }
     }
     
-    	/* LocalizationListener Implementation */
+    /* LocalizationListener Implementation */
 
 	@Override
 	public void onLocationChanged(Location location) {
 		if (location != null) {
 			MarkerFactory.registerMarkerOnMap(getString(R.string.curr_position),location);
-			//GeoMidPointAlgorithm.registerPositions(getString(R.string.curr_position),location);
 		}	
 	}
 
@@ -422,6 +432,16 @@ public class MainActivity extends ActionBarActivity
     protected void navigateToNewPointActivity() {
     	Intent newPointIntent = new Intent(this, NewPoint.class);
     	startActivityForResult(newPointIntent,NEW_POINT_ADDER);
+    }
+    
+    protected void storeLocalizationsFromNewPointToMap(HashMap<String, Location> allPointsProvidedInNewPoint) {
+    	
+    	for(Entry<String,Location> entry : allPointsProvidedInNewPoint.entrySet()) {
+    		String key = entry.getKey();
+    		Location val = entry.getValue();
+    		MarkerFactory.registerMarkerOnMap(key,val);
+    		GeoMidPointAlgorithm.registerPositions(key,val);
+    	}
     }
 
 } /* Main Activity */

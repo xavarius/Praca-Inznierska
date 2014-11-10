@@ -13,11 +13,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="@string/input_place" />
+
+    <Button
+        android:id="@+id/button_done"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:onClick="doneAddingPlaces"
+        android:text="@string/done_adding_places" />
     
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/button_save"
         android:layout_weight="1"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="savePlace"
         android:text="@string/save" />
