@@ -151,12 +151,16 @@ public class MainActivity extends ActionBarActivity
         	return true;
         } else if (id == R.id.meet_place) {
         	MarkerFactory.setMeetingPlace();
+        	return true;
         } else if (id == R.id.new_point) {
         	navigateToNewPointActivity();
+        	return true;
         } else if (id == R.id.remove_all_places) {
         	if (MarkerFactory != null) {
         		MarkerFactory.clearMarkerMap();
+        		return true;
         	}
+        	return false;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -173,7 +177,7 @@ public class MainActivity extends ActionBarActivity
     protected void onResume() {
         super.onResume();
         locationMgr.requestLocationUpdates(getProviderName(), 400, 1, this);
-         loadingObjectOfMainMap();
+        loadingObjectOfMainMap();
      }
     
     public static class PlaceholderFragment extends Fragment {
