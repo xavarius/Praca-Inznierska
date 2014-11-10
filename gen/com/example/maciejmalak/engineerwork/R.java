@@ -2047,8 +2047,8 @@ containing a value of this type.
         public static final int beginning=0x7f080023;
         public static final int book_now=0x7f080010;
         public static final int bottom=0x7f080027;
-        public static final int button_done=0x7f080059;
-        public static final int button_save=0x7f080058;
+        public static final int button_done=0x7f080058;
+        public static final int button_save=0x7f080059;
         public static final int buyButton=0x7f08000a;
         public static final int buy_now=0x7f08000f;
         public static final int buy_with_google=0x7f08000e;

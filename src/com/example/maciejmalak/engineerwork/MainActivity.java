@@ -173,9 +173,6 @@ public class MainActivity extends ActionBarActivity
          loadingObjectOfMainMap();
      }
     
-    /**
-     * A placeholder fragment containing a simple view.
-     */
     public static class PlaceholderFragment extends Fragment {
         /**
          * The fragment argument representing the section number for this
@@ -220,12 +217,7 @@ public class MainActivity extends ActionBarActivity
         if (requestCode == NEW_POINT_ADDER) {
             if (resultCode == RESULT_OK) {
             	if(extras !=null) {
-	            	Toast.makeText(getApplicationContext(),
-	            			"z aktywnosci: " + extras.getString("nazwa") +
-	            			extras.getSerializable("collectionOfPlaces").toString()
-	            			, Toast.LENGTH_SHORT)
-	                        .show();
-	            	
+            		
 	            	HashMap<String, Location> allPointsProvidedInNewPoint
 	            				= (HashMap<String, Location>) 
 	            				extras.getSerializable("collectionOfPlaces");
@@ -403,29 +395,9 @@ public class MainActivity extends ActionBarActivity
 	                .show();
 		    
 		    MarkerFactory.registerMarkerOnMap(getString(R.string.action_my_start), 
-		    									getPhoneStartingPoint());
+		    										getPhoneStartingPoint());
 		    GeoMidPointAlgorithm.registerPositions(getString(R.string.action_my_start), 
 		    										getPhoneStartingPoint());
-		    
-		    /*String s = "Some location";
-		    Location l = new Location(s);
-		    l.setLatitude(52.07964703);
-		    l.setLongitude(16.03394903);
-		    
-		    MarkerFactory.registerMarkerOnMap(s,l);
-		    GeoMidPointAlgorithm.registerPositions(s,l);
-		    
-		    s = "other loc";
-		    l.setLatitude(50.07964703);
-		    l.setLongitude(16.59);
-		    MarkerFactory.registerMarkerOnMap(s,l);
-		    GeoMidPointAlgorithm.registerPositions(s,l);
-		    
-		    s = "other loc1";
-		    l.setLatitude(51.0);
-		    l.setLongitude(15.09999);
-		    MarkerFactory.registerMarkerOnMap(s,l);
-		    GeoMidPointAlgorithm.registerPositions(s,l);*/
 		}
 	}
     
@@ -435,7 +407,6 @@ public class MainActivity extends ActionBarActivity
     }
     
     protected void storeLocalizationsFromNewPointToMap(HashMap<String, Location> allPointsProvidedInNewPoint) {
-    	
     	for(Entry<String,Location> entry : allPointsProvidedInNewPoint.entrySet()) {
     		String key = entry.getKey();
     		Location val = entry.getValue();
@@ -443,5 +414,4 @@ public class MainActivity extends ActionBarActivity
     		GeoMidPointAlgorithm.registerPositions(key,val);
     	}
     }
-
 } /* Main Activity */
