@@ -374,7 +374,7 @@ public class MainActivity extends ActionBarActivity
 		    GeoMidPointAlgorithm.registerPositions(getString(R.string.action_my_start), 
 		    										getPhoneStartingPoint());
 		    
-		    String s = "Some location";
+		    /*String s = "Some location";
 		    Location l = new Location(s);
 		    l.setLatitude(52.07964703);
 		    l.setLongitude(16.03394903);
@@ -392,7 +392,7 @@ public class MainActivity extends ActionBarActivity
 		    l.setLatitude(51.0);
 		    l.setLongitude(15.09999);
 		    MarkerFactory.registerMarkerOnMap(s,l);
-		    GeoMidPointAlgorithm.registerPositions(s,l);
+		    GeoMidPointAlgorithm.registerPositions(s,l);*/
 		}
 	}
     

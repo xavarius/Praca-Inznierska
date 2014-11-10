@@ -1,6 +1,9 @@
 package com.example.maciejmalak.engineerwork;
 
+import java.util.HashMap;
 import java.util.List;
+
+import com.google.android.gms.maps.model.Marker;
 
 import android.location.Address;
 import android.location.Geocoder;
@@ -18,6 +21,11 @@ import android.widget.Toast;
 
 public class NewPoint extends ActionBarActivity {
 
+	private Geocoder coder;
+	private GetLocationFormAddress getLoc = new GetLocationFormAddress();
+	private HashMap<String, Location> allPointsProvidedInEditText 
+								= new HashMap<String, Location>();
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -26,6 +34,8 @@ public class NewPoint extends ActionBarActivity {
 			getSupportFragmentManager().beginTransaction()
 					.add(R.id.container, new PlaceholderFragment()).commit();
 		}
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		coder = new Geocoder(this);
 	}
 
 	@Override
@@ -65,34 +75,48 @@ public class NewPoint extends ActionBarActivity {
 	}
 	
 	public void savePlace (View view) {
-		
 		EditText et = (EditText)findViewById(R.id.input_place);
-		String text = et.getText().toString();
-		getLocationFromAddress(text);
+		getLoc.getLocationFromAddress(et.getText().toString());
 	}
 	
-	public Location getLocationFromAddress(String strAddress){
-
-		Geocoder coder = new Geocoder(this);
-		List<Address> address;
-		Location currentlyAdding = new Location("New location");
-
-		try {
-		    address = coder.getFromLocationName(strAddress,5);
-		    if (address == null) { return null; }
-		    
-		    Address location = address.get(0);
-		    currentlyAdding.setLatitude(location.getLatitude());
-		    currentlyAdding.setLongitude(location.getLongitude());
-
-		    Toast.makeText(getApplicationContext(),
-		    		currentlyAdding.toString() , Toast.LENGTH_SHORT)
-	                .show();
-		    
-		    return currentlyAdding;
-		} catch (Exception e) { e.printStackTrace(); 
-		} finally {}
+	public class GetLocationFormAddress {
 		
-		return null;
+		int Iterator;
+		
+		public GetLocationFormAddress() {
+			this.Iterator = 0;
+		}
+		
+		public void getLocationFromAddress(String enteredAddress){
+			
+			List<Address> address;  
+			Location currentlyAdding = new Location(enteredAddress);
+			
+			try {
+				/* Searching for only one Address */
+			    address = coder.getFromLocationName(enteredAddress,1);
+			    
+			    if (address != null) { 	
+			    	Iterator++;
+				    String nameOfPoint = "Point nr " + Iterator;
+				    Address currentLocation = address.get(0);
+				    currentlyAdding.setLatitude(currentLocation.getLatitude());
+				    currentlyAdding.setLongitude(currentLocation.getLongitude());	    
+				    			    
+				    Toast.makeText(getApplicationContext(),
+				    		currentlyAdding.toString() , Toast.LENGTH_SHORT)
+			                .show();
+				    
+				    registerLocationsThatWillBeDisplayedOnMap(nameOfPoint,currentlyAdding);
+			    }   
+			} catch (Exception e) { e.printStackTrace(); 
+			} finally {}
+			
+		}
+		
+		public void registerLocationsThatWillBeDisplayedOnMap(String key, Location loc) {
+			allPointsProvidedInEditText.put(key, loc);
+		}
 	}
+	
 }
