@@ -25,6 +25,7 @@ public class NewPoint extends ActionBarActivity {
 	private GetLocationFormAddress getLoc = new GetLocationFormAddress();
 	private HashMap<String, Location> allPointsProvidedInEditText 
 								= new HashMap<String, Location>();
+	private static int Iterator = 0;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -93,11 +94,9 @@ public class NewPoint extends ActionBarActivity {
 	}
 	
 	public class GetLocationFormAddress {
-		
-		int Iterator;
-		
+			
 		public GetLocationFormAddress() {
-			this.Iterator = 0;
+	
 		}
 		
 		public void getLocationFromAddress(String enteredAddress){
