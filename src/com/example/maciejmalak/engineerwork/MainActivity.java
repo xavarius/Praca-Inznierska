@@ -32,6 +32,7 @@ import com.google.android.gms.maps.MapFragment;
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener {
 
+	private static final int NEW_POINT_ADDER = 1;
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -208,6 +209,28 @@ public class MainActivity extends ActionBarActivity
                     getArguments().getInt(ARG_SECTION_NUMBER));
         }
     }
+    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Bundle extras = data.getExtras();
+        
+        if (requestCode == NEW_POINT_ADDER) {
+            if (resultCode == RESULT_OK) {
+            	if(extras !=null) {
+	            	Toast.makeText(getApplicationContext(),
+	            			"z aktywnosci: " + extras.getString("nazwa") +
+	            			extras.getSerializable("kolekcja").toString()
+	            			, Toast.LENGTH_SHORT)
+	                        .show();
+            	}
+            } else if (resultCode == RESULT_CANCELED) {
+            	Toast.makeText(getApplicationContext(),
+                        "NIE Uda³o siê przekazaæ zwrotnie informacje", Toast.LENGTH_SHORT)
+                        .show();
+            }
+        }
+    }
+    
     	/* LocalizationListener Implementation */
 
 	@Override
@@ -398,7 +421,7 @@ public class MainActivity extends ActionBarActivity
     
     protected void navigateToNewPointActivity() {
     	Intent newPointIntent = new Intent(this, NewPoint.class);
-    	startActivity(newPointIntent);
+    	startActivityForResult(newPointIntent,NEW_POINT_ADDER);
     }
 
 } /* Main Activity */

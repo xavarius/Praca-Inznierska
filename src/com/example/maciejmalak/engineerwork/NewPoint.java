@@ -3,8 +3,7 @@ package com.example.maciejmalak.engineerwork;
 import java.util.HashMap;
 import java.util.List;
 
-import com.google.android.gms.maps.model.Marker;
-
+import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -77,6 +76,19 @@ public class NewPoint extends ActionBarActivity {
 	public void savePlace (View view) {
 		EditText et = (EditText)findViewById(R.id.input_place);
 		getLoc.getLocationFromAddress(et.getText().toString());
+	}
+	
+	public void doneAddingPlaces( View view) {
+		if (allPointsProvidedInEditText == null) {
+			setResult(RESULT_CANCELED);
+			finish();
+		}
+		Bundle extras = new Bundle();
+		extras.putSerializable("collectionOfPlaces", allPointsProvidedInEditText);
+		Intent intent = new Intent(this, MainActivity.class);
+		intent.putExtras(extras);
+		setResult(RESULT_OK,intent);
+		finish();
 	}
 	
 	public class GetLocationFormAddress {
