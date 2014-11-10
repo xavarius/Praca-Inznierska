@@ -63,6 +63,7 @@ public class MarkerMaintenance {
 	public void removeSelectedMarkerFromMap(String key) {
 		allMarkersVisibleOnMap.get(key).remove();
 		allMarkersVisibleOnMap.remove(key);
+		GeoMidPointAlgorithm.removePosition(key);
 	}
 	
 	public void animateCameraOnMarker(Marker marker) {
@@ -72,6 +73,7 @@ public class MarkerMaintenance {
 	public void clearMarkerMap () {
 		for (String key : allMarkersVisibleOnMap.keySet()) {
 			allMarkersVisibleOnMap.get(key).remove();
+			GeoMidPointAlgorithm.removePosition(key);
 		}
 		allMarkersVisibleOnMap.clear();
 	}

@@ -2041,7 +2041,7 @@ containing a value of this type.
         public static final int action_mode_close_button=0x7f080033;
         public static final int action_my_place=0x7f08005b;
         public static final int action_my_start=0x7f08005a;
-        public static final int action_settings=0x7f08005e;
+        public static final int action_settings=0x7f08005f;
         public static final int activity_chooser_view_content=0x7f080034;
         public static final int always=0x7f08001e;
         public static final int beginning=0x7f080023;
@@ -2092,6 +2092,7 @@ containing a value of this type.
         public static final int progress_circular=0x7f08002f;
         public static final int progress_horizontal=0x7f080030;
         public static final int radio=0x7f08003e;
+        public static final int remove_all_places=0x7f08005e;
         public static final int sandbox=0x7f080008;
         public static final int satellite=0x7f080002;
         public static final int search_badge=0x7f080048;
@@ -2358,6 +2359,7 @@ containing a value of this type.
         public static final int new_point=0x7f060044;
         public static final int no=0x7f060043;
         public static final int on_question=0x7f060041;
+        public static final int remove_all_places=0x7f060049;
         public static final int save=0x7f060047;
         public static final int store_picture_message=0x7f060001;
         public static final int store_picture_title=0x7f060000;

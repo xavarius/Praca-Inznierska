@@ -37,6 +37,7 @@ public class NewPoint extends ActionBarActivity {
 		}
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		coder = new Geocoder(this);
+		setResult(RESULT_CANCELED);
 	}
 
 	@Override

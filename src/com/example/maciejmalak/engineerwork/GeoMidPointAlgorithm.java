@@ -59,6 +59,7 @@ public class GeoMidPointAlgorithm {
 		LNG = Math.atan2(avrY, avrX);
 		LAT = Math.atan2(avrZ, hyp);
 		
+		allPositionsAsCartesianCoordinates.clear();
 		return convertRadiansToDegreesAndThenToLatLng(LAT,LNG);
 	}
 	
@@ -97,5 +98,9 @@ public class GeoMidPointAlgorithm {
 	protected static double convertToDegrees(double rad) {
 		double degree = rad * (180/Math.PI);
 		return degree;
+	}
+
+	protected static void removePosition(String key) {
+		allPeoplePositions.remove(key);
 	}
 }

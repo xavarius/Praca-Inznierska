@@ -143,7 +143,6 @@ public class MainActivity extends ActionBarActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_my_start) {	
-        	
         	if(isGPSEnabled()) {
         		setUpStartingLocation();
         	} else {
@@ -154,6 +153,10 @@ public class MainActivity extends ActionBarActivity
         	MarkerFactory.setMeetingPlace();
         } else if (id == R.id.new_point) {
         	navigateToNewPointActivity();
+        } else if (id == R.id.remove_all_places) {
+        	if (MarkerFactory != null) {
+        		MarkerFactory.clearMarkerMap();
+        	}
         }
         return super.onOptionsItemSelected(item);
     }
@@ -212,10 +215,10 @@ public class MainActivity extends ActionBarActivity
     
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Bundle extras = data.getExtras();
-        
+    	
         if (requestCode == NEW_POINT_ADDER) {
             if (resultCode == RESULT_OK) {
+            	Bundle extras = data.getExtras();
             	if(extras !=null) {
             		
 	            	HashMap<String, Location> allPointsProvidedInNewPoint

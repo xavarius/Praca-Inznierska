@@ -24,5 +24,6 @@
     <string name="input_place">Input address/geopoint</string>
 	<string name="save">Save Place</string>
 	<string name="done_adding_places">Done Adding Places</string>
+	<string name="remove_all_places">Remove All Markers</string>
 	
 </resources>

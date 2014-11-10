@@ -443,7 +443,7 @@ int id action_mode_bar_stub 0x7f080040
 int id action_mode_close_button 0x7f080033
 int id action_my_place 0x7f08005b
 int id action_my_start 0x7f08005a
-int id action_settings 0x7f08005e
+int id action_settings 0x7f08005f
 int id activity_chooser_view_content 0x7f080034
 int id always 0x7f08001e
 int id beginning 0x7f080023
@@ -494,6 +494,7 @@ int id production 0x7f080007
 int id progress_circular 0x7f08002f
 int id progress_horizontal 0x7f080030
 int id radio 0x7f08003e
+int id remove_all_places 0x7f08005e
 int id sandbox 0x7f080008
 int id satellite 0x7f080002
 int id search_badge 0x7f080048
@@ -621,6 +622,7 @@ int string net_enabled 0x7f06003c
 int string new_point 0x7f060044
 int string no 0x7f060043
 int string on_question 0x7f060041
+int string remove_all_places 0x7f060049
 int string save 0x7f060047
 int string store_picture_message 0x7f060001
 int string store_picture_title 0x7f060000
