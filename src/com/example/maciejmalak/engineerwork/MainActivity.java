@@ -109,13 +109,13 @@ public class MainActivity extends ActionBarActivity
     public void onSectionAttached(int number) {
         switch (number) {
             case 1:
-                mTitle = getString(R.string.title_section1);
+                /*mTitle = getString(R.string.title_section1);*/
                 break;
             case 2:
-                mTitle = getString(R.string.title_section2);
+               /* mTitle = getString(R.string.title_section2);*/
                 break;
             case 3:
-                mTitle = getString(R.string.title_section3);
+                /*mTitle = getString(R.string.title_section3);*/
                 break;
         }
     }
@@ -142,17 +142,11 @@ public class MainActivity extends ActionBarActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_my_start) {	
-        	if(isGPSEnabled()) {
-        		setUpStartingLocation();
-        	} else {
-        		checkProvidersGPS();
-        	}
-        	return true;
-        } else if (id == R.id.meet_place) {
+        
+        if (id == R.id.meet_place) {
         	MarkerFactory.setMeetingPlace();
         	return true;
-        } else if (id == R.id.new_point) {
+        } else if (id == R.id.friends_point) {
         	navigateToNewPointActivity();
         	return true;
         } else if (id == R.id.remove_all_places) {
@@ -161,6 +155,13 @@ public class MainActivity extends ActionBarActivity
         		return true;
         	}
         	return false;
+        } else if (id == R.id.action_my_place) {
+        	if(isGPSEnabled()) {
+        		setUpStartingLocation();
+        	} else {
+        		checkProvidersGPS();
+        	}
+        	return true;
         }
         return super.onOptionsItemSelected(item);
     }

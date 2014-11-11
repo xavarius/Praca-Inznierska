@@ -75,6 +75,7 @@ public class MarkerMaintenance {
 			allMarkersVisibleOnMap.get(key).remove();
 			GeoMidPointAlgorithm.removePosition(key);
 		}
+		removingCircle();
 		allMarkersVisibleOnMap.clear();
 	}
 	
