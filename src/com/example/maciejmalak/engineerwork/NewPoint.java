@@ -21,23 +21,24 @@ import android.widget.Toast;
 
 public class NewPoint extends ActionBarActivity {
 
-	private Geocoder coder;
-	private GetLocationFormAddress getLoc = new GetLocationFormAddress();
+	
+	private GeocodingTasks getLoc;
 	private HashMap<String, Location> allPointsProvidedInEditText 
 								= new HashMap<String, Location>();
-	private static int Iterator = 0;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_new_point);
+		
 		if (savedInstanceState == null) {
 			getSupportFragmentManager().beginTransaction()
 					.add(R.id.container, new PlaceholderFragment()).commit();
 		}
+		
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		coder = new Geocoder(this);
 		setResult(RESULT_CANCELED);
+		getLoc = new GeocodingTasks(this);
 	}
 
 	@Override
@@ -78,7 +79,12 @@ public class NewPoint extends ActionBarActivity {
 	
 	public void savePlace (View view) {
 		EditText et = (EditText)findViewById(R.id.input_place);
-		getLoc.getLocationFromAddress(et.getText().toString());
+		String readEditText = et.getText().toString();
+		if (readEditText != null) {
+			Location loc = getLoc.getLocationFromAddress(readEditText);
+			if (loc != null)
+				registerLocationsThatWillBeDisplayedOnMap(readEditText,loc);
+		}	
 	}
 	
 	public void doneAddingPlaces(View view) {
@@ -86,6 +92,7 @@ public class NewPoint extends ActionBarActivity {
 			setResult(RESULT_CANCELED);
 			finish();
 		}
+		
 		Bundle extras = new Bundle();
 		extras.putSerializable("collectionOfPlaces", allPointsProvidedInEditText);
 		Intent intent = new Intent(this, MainActivity.class);
@@ -94,42 +101,7 @@ public class NewPoint extends ActionBarActivity {
 		finish();
 	}
 	
-	public class GetLocationFormAddress {
-			
-		public GetLocationFormAddress() {
-	
-		}
-		
-		public void getLocationFromAddress(String enteredAddress){
-			
-			List<Address> address;  
-			Location currentlyAdding = new Location(enteredAddress);
-			
-			try {
-				/* Searching for only one Address */
-			    address = coder.getFromLocationName(enteredAddress,1);
-			    
-			    if (address != null) { 	
-			    	Iterator++;
-				    String nameOfPoint = "Point nr " + Iterator;
-				    Address currentLocation = address.get(0);
-				    currentlyAdding.setLatitude(currentLocation.getLatitude());
-				    currentlyAdding.setLongitude(currentLocation.getLongitude());	    
-				    			    
-				    Toast.makeText(getApplicationContext(),
-				    		currentlyAdding.toString() , Toast.LENGTH_SHORT)
-			                .show();
-				    
-				    registerLocationsThatWillBeDisplayedOnMap(nameOfPoint,currentlyAdding);
-			    }   
-			} catch (Exception e) { e.printStackTrace(); 
-			} finally {}
-			
-		}
-		
-		public void registerLocationsThatWillBeDisplayedOnMap(String key, Location loc) {
-			allPointsProvidedInEditText.put(key, loc);
-		}
+	public void registerLocationsThatWillBeDisplayedOnMap(String key, Location loc) {
+		allPointsProvidedInEditText.put(key, loc);
 	}
-	
 }

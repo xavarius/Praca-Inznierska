@@ -11,4 +11,13 @@ public class LocalizationCalculationHelper {
 		LatLng here = new LatLng(latitude, longitude);
 		return here;
 	}
+	
+	public static Location LocalizationFromGeopoint(LatLng pos){
+		double latitude = pos.latitude;
+		double longitude = pos.longitude;
+		Location here = new Location("");
+		here.setLatitude(latitude);
+		here.setLongitude(longitude);
+		return here;
+	}
 }

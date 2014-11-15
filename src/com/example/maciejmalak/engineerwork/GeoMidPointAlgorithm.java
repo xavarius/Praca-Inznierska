@@ -2,9 +2,7 @@ package com.example.maciejmalak.engineerwork;
 
 import java.util.HashMap;
 import java.util.Map.Entry;
-
 import android.location.Location;
-
 import com.google.android.gms.maps.model.LatLng;
 
 public class GeoMidPointAlgorithm {

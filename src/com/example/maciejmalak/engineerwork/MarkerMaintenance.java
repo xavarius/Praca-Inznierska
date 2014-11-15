@@ -2,6 +2,7 @@ package com.example.maciejmalak.engineerwork;
 
 import java.util.HashMap;
 
+import android.content.Context;
 import android.location.Location;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -18,8 +19,9 @@ public class MarkerMaintenance {
 	private final static String MEET = "Meeting Place";
 	
 	private GoogleMap googleMapInstance;
-	Circle circle;
-	
+	private Circle circle;
+	private Context appContext;
+	private GeocodingTasks geocoder;
 	/* We need to store those keys value
 	 * because Resources (R) are only
 	 * accessible from Activity class
@@ -28,36 +30,46 @@ public class MarkerMaintenance {
 					currentPointKey;
 	
 	private HashMap<String, Marker> allMarkersVisibleOnMap = new HashMap<String, Marker>();
+	
+	private float standardMarker = BitmapDescriptorFactory.HUE_ORANGE;
+	private float startMarker =   BitmapDescriptorFactory.HUE_BLUE;
+	private float currentPosMarker = BitmapDescriptorFactory.HUE_RED;
+	private float meetingPlaceMarker =   BitmapDescriptorFactory.HUE_MAGENTA;
 
-	public MarkerMaintenance(GoogleMap map, String resourceStartPosition, String resourceCurrPosition){
+	public MarkerMaintenance(GoogleMap map, String resourceStartPosition, String resourceCurrPosition, Context appContext){
 		this.googleMapInstance = map;
 		this.currentPointKey = resourceCurrPosition;
 		this.startPointKey = resourceStartPosition;
+		this.appContext = appContext;
+		this.geocoder = new GeocodingTasks(appContext);
 	}
 	
 	public void registerMarkerOnMap(String key, Location position) {	
 		LatLng pos = LocalizationCalculationHelper.geoPointFromLocalization(position);
 		
+		
 		if (allMarkersVisibleOnMap.get(key) != null ) {
 			allMarkersVisibleOnMap.get(key).setPosition(pos);
+			allMarkersVisibleOnMap.get(key).setSnippet(getAdressFromLocation(position));
 		} else {
 			Marker currentRetriveMarker 
-				= googleMapInstance.addMarker(getMarkerOptions(key, pos));
+				= googleMapInstance.addMarker(getMarkerOptions(key, getAdressFromLocation(position), pos));
 			allMarkersVisibleOnMap.put(key, currentRetriveMarker);
 		}
 		
 		if ( key == currentPointKey ) {
 			settingCircle(pos ,position.getAccuracy());
-			googleMapInstance.animateCamera(CameraUpdateFactory.newLatLngZoom(pos, 18.0f));
+			//googleMapInstance.animateCamera(CameraUpdateFactory.newLatLngZoom(pos, 18.0f));
 		}
 	}
 	
-	public MarkerOptions getMarkerOptions(String key, LatLng pos) {
+	public MarkerOptions getMarkerOptions(String key, String snippet, LatLng pos) {
+		float colorOfMarker = colorOfMarker(key);
 		return new MarkerOptions()
 	        .position(pos)
 	        .title(key)
-	        .snippet(pos.toString())
-	        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE));
+	        .snippet(snippet)
+	        .icon(BitmapDescriptorFactory.defaultMarker(colorOfMarker));
 	}
 	
 	public void removeSelectedMarkerFromMap(String key) {
@@ -93,15 +105,40 @@ public class MarkerMaintenance {
 	
 	public void setMeetingPlace() {
 		removeMeetingPlaceMarkerFromMap();
+		LatLng meetPointLatLng = GeoMidPointAlgorithm.geographicMidpointAlgorithm();
+		Location meetPoint = 
+				LocalizationCalculationHelper.LocalizationFromGeopoint(meetPointLatLng);
+		
 		Marker currentRetriveMarker 
-			= googleMapInstance.addMarker(getMarkerOptions(MEET,
-								GeoMidPointAlgorithm.geographicMidpointAlgorithm()));
+			= googleMapInstance.addMarker(
+									getMarkerOptions(
+											MEET,
+											getAdressFromLocation(meetPoint),
+											meetPointLatLng
+								));
 		allMarkersVisibleOnMap.put(MEET, currentRetriveMarker);
 	}
 	
 	public void removeMeetingPlaceMarkerFromMap() {
 		if (allMarkersVisibleOnMap.get(MEET) != null) {
 			allMarkersVisibleOnMap.get(MEET).remove();
+			allMarkersVisibleOnMap.remove(MEET);
 		}
 	}
+	
+	public float colorOfMarker(String key) {
+		if (key == currentPointKey) {
+			return currentPosMarker;
+		} else if (key == MEET) {
+			return meetingPlaceMarker;
+		} else if (key == startPointKey) {
+			return startMarker;
+		}
+		return standardMarker;
+	}
+	
+	public String getAdressFromLocation(Location pos) {
+		return this.geocoder.getAdressFromLocation(pos);
+	}
+	
 }

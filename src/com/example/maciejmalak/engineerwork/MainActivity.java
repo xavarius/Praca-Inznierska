@@ -88,7 +88,7 @@ public class MainActivity extends ActionBarActivity
         if (map != null) {
         	MarkerFactory = new MarkerMaintenance(
         							map, getString(R.string.action_my_start),
-        							getString(R.string.curr_position));
+        							getString(R.string.curr_position), this);
         }
         
         /* Asking user for enable Internet connection */
@@ -218,7 +218,8 @@ public class MainActivity extends ActionBarActivity
         }
     }
     
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     	
         if (requestCode == NEW_POINT_ADDER) {
