@@ -44,17 +44,14 @@ public class MainActivity extends ActionBarActivity
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
-    private CharSequence mTitle;
-    
+    private CharSequence appTitle;
     private static GoogleMap map;
     private LocationManager locationMgr;
     private MarkerMaintenance MarkerFactory;
 	private String providerName;
 	private Criteria criteria;
-	
 	private Location currentLocation;
-	private Location phoneStartingPoint;
-
+	private Location userStartingPoint;
 	
 	/* -------- Implementation of Interfaces Section ------------------------- */
 	
@@ -64,13 +61,12 @@ public class MainActivity extends ActionBarActivity
         setContentView(R.layout.activity_main);
 
         /* ----------------- NavigationDrawer Section ----------------- */
+        appTitle = getTitle();
         mNavigationDrawerFragment = (NavigationDrawerFragment)
-                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-        mTitle = getTitle();
-
+                					getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mNavigationDrawerFragment.setUp(
-                R.id.navigation_drawer,
-                (DrawerLayout) findViewById(R.id.drawer_layout));
+                					R.id.navigation_drawer,
+                					(DrawerLayout) findViewById(R.id.drawer_layout));
         
         /* ----------------- Localization Section ----------------- */
         
@@ -82,16 +78,16 @@ public class MainActivity extends ActionBarActivity
 		/* ----------------- Map Section ----------------- */
         try {
             loadingObjectOfMainMap();
-         } catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
-         }
+        }
         if (map != null) {
         	MarkerFactory = new MarkerMaintenance(
         							map, getString(R.string.action_my_start),
         							getString(R.string.curr_position), this);
         }
-        
-        /* Asking user for enable Internet connection */
+
+		/* ----------------- Providers Section ----------------- */
         checkProvidersNET();
         checkProvidersGPS();
     } /* onCreate */
@@ -109,13 +105,14 @@ public class MainActivity extends ActionBarActivity
     public void onSectionAttached(int number) {
         switch (number) {
             case 1:
-                /*mTitle = getString(R.string.title_section1);*/
+                /*Tutaj wywo³ujemy akcje po naciœniêciu 
+                 * odpowiedniej pozycji liczonej od góry
+                 * w NavigationDrawer						
+                */
                 break;
             case 2:
-               /* mTitle = getString(R.string.title_section2);*/
                 break;
             case 3:
-                /*mTitle = getString(R.string.title_section3);*/
                 break;
         }
     }
@@ -125,7 +122,7 @@ public class MainActivity extends ActionBarActivity
         ActionBar actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
         actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setTitle(mTitle);
+        actionBar.setTitle(appTitle);
     }
 
 
@@ -142,27 +139,29 @@ public class MainActivity extends ActionBarActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        boolean ifDone = false;
         
-        if (id == R.id.meet_place) {
-        	MarkerFactory.setMeetingPlace();
-        	return true;
-        } else if (id == R.id.friends_point) {
-        	navigateToNewPointActivity();
-        	return true;
-        } else if (id == R.id.remove_all_places) {
-        	if (MarkerFactory != null) {
+        switch (id) {
+        case R.id.meet_place:
+        		MarkerFactory.setMeetingPlace();
+        		ifDone = true;
+        		break;
+        case R.id.friends_point:
+        		navigateToNewPointActivity();
+        		ifDone = true;
+        		break;
+        case R.id.remove_all_places:
         		MarkerFactory.clearMarkerMap();
-        		return true;
-        	}
-        	return false;
-        } else if (id == R.id.action_my_place) {
-        	if(isGPSEnabled()) {
-        		setUpStartingLocation();
-        	} else {
-        		checkProvidersGPS();
-        	}
-        	return true;
+        		ifDone = true;
+        		break;
+        case R.id.action_my_place:
+	        	if(isGPSEnabled()) {  setUpStartingLocation(); } 
+	        	else 			   {  checkProvidersGPS();     }
+        		ifDone = true;
+        		break;
         }
+
+        if (ifDone == true) return true;
         return super.onOptionsItemSelected(item);
     }
     
@@ -172,7 +171,7 @@ public class MainActivity extends ActionBarActivity
         if (locationMgr != null) {
         	locationMgr.removeUpdates(this);
         }
-      }
+    }
 
     @Override
     protected void onResume() {
@@ -180,6 +179,54 @@ public class MainActivity extends ActionBarActivity
         locationMgr.requestLocationUpdates(getProviderName(), 400, 1, this);
         loadingObjectOfMainMap();
      }
+    
+    @SuppressWarnings("unchecked")
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+    	if (requestCode == NEW_POINT_ADDER && resultCode == RESULT_OK) {
+    		Bundle extras = data.getExtras();
+    		if(extras !=null) {
+
+    			HashMap<String, Location> allPointsProvidedInNewPoint
+    			= (HashMap<String, Location>) 
+    			extras.getSerializable("collectionOfPlaces");
+
+    			if (allPointsProvidedInNewPoint != null) {
+    				storeLocalizationsFromNewPointToMap(allPointsProvidedInNewPoint);
+    			}
+    		}
+    	} else if (resultCode == RESULT_CANCELED) {
+    		Toast.makeText(getApplicationContext(),
+    				R.string.not_saved_changes, Toast.LENGTH_SHORT)
+    				.show();
+    	}
+    }
+
+	@Override
+	public void onLocationChanged(Location location) {
+		if (location != null) {
+			MarkerFactory.registerMarkerOnMap(getString(R.string.curr_position),location);
+		}	
+	}
+
+	@Override
+	public void onStatusChanged(String provider, int status, Bundle extras) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProviderEnabled(String provider) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onProviderDisabled(String provider) {
+		// TODO Auto-generated method stub
+		
+	}
     
     public static class PlaceholderFragment extends Fragment {
         /**
@@ -218,66 +265,7 @@ public class MainActivity extends ActionBarActivity
         }
     }
     
-    @SuppressWarnings("unchecked")
-	@Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    	
-        if (requestCode == NEW_POINT_ADDER) {
-            if (resultCode == RESULT_OK) {
-            	Bundle extras = data.getExtras();
-            	if(extras !=null) {
-            		
-	            	HashMap<String, Location> allPointsProvidedInNewPoint
-	            				= (HashMap<String, Location>) 
-	            				extras.getSerializable("collectionOfPlaces");
-	            	
-	            	if (allPointsProvidedInNewPoint != null) {
-	            		storeLocalizationsFromNewPointToMap(allPointsProvidedInNewPoint);
-	            	}
-            	}
-            } else if (resultCode == RESULT_CANCELED) {
-            	Toast.makeText(getApplicationContext(),
-                        "NIE Uda³o siê przekazaæ zwrotnie informacje", Toast.LENGTH_SHORT)
-                        .show();
-            }
-        }
-    }
-    
-    /* LocalizationListener Implementation */
-
-	@Override
-	public void onLocationChanged(Location location) {
-		if (location != null) {
-			MarkerFactory.registerMarkerOnMap(getString(R.string.curr_position),location);
-		}	
-	}
-
-	@Override
-	public void onStatusChanged(String provider, int status, Bundle extras) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onProviderEnabled(String provider) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onProviderDisabled(String provider) {
-		// TODO Auto-generated method stub
-		
-	}
-    
     /* ----------- SETTERS AND GETTERS ----------------------------------------- */ 
-	public Location getPhoneStartingPoint() {
-		return phoneStartingPoint;
-	}
-
-	public void setPhoneStartingPoint(Location phoneStartingPoint) {
-		this.phoneStartingPoint = phoneStartingPoint;
-	}
 	
 	protected Location getCurrentLocation() {
 		Location loc = locationMgr.getLastKnownLocation(providerName);
@@ -299,9 +287,8 @@ public class MainActivity extends ActionBarActivity
      */
     protected void loadingObjectOfMainMap() {
     	if( map == null) {
-    		
 	    	map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
-	                .getMap();
+	               .getMap();
 	    	map.setMyLocationEnabled(true);
     	}
     }
@@ -394,19 +381,23 @@ public class MainActivity extends ActionBarActivity
 	
     protected void setUpStartingLocation() {
 		
-		currentLocation = getCurrentLocation();
-		if (currentLocation != null) {
-			setPhoneStartingPoint(currentLocation);
+		this.userStartingPoint = getCurrentLocation();
+		if (this.userStartingPoint != null) {
 			
-		    Toast.makeText(getApplicationContext(),
-	                "Start Location:" + 
-	                		getPhoneStartingPoint().toString(), Toast.LENGTH_SHORT)
-	                .show();
+			Toast.makeText(getApplicationContext(),
+							R.string.start_pos_is_set +
+							this.userStartingPoint.toString(), Toast.LENGTH_SHORT)
+							.show();
 		    
 		    MarkerFactory.registerMarkerOnMap(getString(R.string.action_my_start), 
-		    								  getPhoneStartingPoint());
+		    								  this.userStartingPoint);
 		    GeoMidPointAlgorithm.registerPositions(getString(R.string.action_my_start), 
-		    									   getPhoneStartingPoint());
+		    									   this.userStartingPoint);
+		} else {
+			Toast.makeText(getApplicationContext(),
+					R.string.start_pos_is_not_set, 
+					Toast.LENGTH_SHORT)
+					.show();
 		}
 	}
     

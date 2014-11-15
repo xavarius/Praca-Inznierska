@@ -2358,9 +2358,12 @@ containing a value of this type.
         public static final int net_enabled=0x7f06003c;
         public static final int new_point=0x7f060044;
         public static final int no=0x7f060043;
+        public static final int not_saved_changes=0x7f06004b;
         public static final int on_question=0x7f060041;
         public static final int remove_all_places=0x7f06004a;
         public static final int save=0x7f060048;
+        public static final int start_pos_is_not_set=0x7f06004d;
+        public static final int start_pos_is_set=0x7f06004c;
         public static final int store_picture_message=0x7f060001;
         public static final int store_picture_title=0x7f060000;
         public static final int title_activity_new_point=0x7f060046;

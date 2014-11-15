@@ -621,9 +621,12 @@ int string net_distabled 0x7f06003d
 int string net_enabled 0x7f06003c
 int string new_point 0x7f060044
 int string no 0x7f060043
+int string not_saved_changes 0x7f06004b
 int string on_question 0x7f060041
 int string remove_all_places 0x7f06004a
 int string save 0x7f060048
+int string start_pos_is_not_set 0x7f06004d
+int string start_pos_is_set 0x7f06004c
 int string store_picture_message 0x7f060001
 int string store_picture_title 0x7f060000
 int string title_activity_new_point 0x7f060046
