@@ -279,6 +279,11 @@ public class MainActivity extends ActionBarActivity
 	public String getProviderName() {
 		return providerName;
 	}
+	
+
+	public void setCurrentLocation(Location currentLocation) {
+		this.currentLocation = currentLocation;
+	}
     
 	/* ----------- Others methods ----------------------------------------- */
 	
