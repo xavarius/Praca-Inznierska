@@ -46,8 +46,8 @@ public class MarkerMaintenance {
 	
 	public void registerMarkerOnMap(String key, Location position) {	
 		LatLng pos = LocalizationCalculationHelper.geoPointFromLocalization(position);
-		String address = getAdressFromLocation(position);
-		
+		//String address = getAdressFromLocation(position);
+		String address ="anything";
 		if (allMarkersVisibleOnMap.get(key) != null ) {
 			allMarkersVisibleOnMap.get(key).setPosition(pos);
 			allMarkersVisibleOnMap.get(key).setSnippet(address);
@@ -101,7 +101,7 @@ public class MarkerMaintenance {
 		 circle = googleMapInstance.addCircle(circleOptions);
 	}
 	
-	public void removingCircle() { circle.remove(); }
+	public void removingCircle() { if (circle != null) circle.remove(); }
 	
 	public void setMeetingPlace() {
 		removeMeetingPlaceMarkerFromMap();
