@@ -7,8 +7,8 @@ import com.google.android.gms.maps.model.LatLng;
 
 public class GeoMidPointAlgorithm {
 	
-	private static HashMap<String, LatLng> allPeoplePositions =
-											new HashMap<String, LatLng>();
+	private static HashMap<String, Location> allPeoplePositions =
+											new HashMap<String, Location>();
 	private static HashMap<String, CartesiansCoordinates> allPositionsAsCartesianCoordinates = 
 											new HashMap<String, CartesiansCoordinates>();
 	
@@ -18,9 +18,7 @@ public class GeoMidPointAlgorithm {
 						 averageLatLng;
 	
 	public static void registerPositions(String key, Location position) {
-		LatLng pos = LocalizationCalculationHelper
-						.geoPointFromLocalization(position);
-		allPeoplePositions.put(key, pos);	
+		allPeoplePositions.put(key, position);	
 	}
 	
 	public static LatLng geographicMidpointAlgorithm() {
@@ -62,19 +60,19 @@ public class GeoMidPointAlgorithm {
 	
 	protected static void settingContexOfCartesianCoordinatesHashMap() {
 		
-		for(Entry<String, LatLng> entry : allPeoplePositions.entrySet()) {
+		for(Entry<String, Location> entry : allPeoplePositions.entrySet()) {
 		    String key = entry.getKey();
-		    LatLng pos = entry.getValue();
+		    Location pos = entry.getValue();
 
 		    allPositionsAsCartesianCoordinates.put(key, 
 		    		LatLngToCartesian(pos));
 		}
 	}
 	
-	protected static CartesiansCoordinates LatLngToCartesian(LatLng position) {
+	protected static CartesiansCoordinates LatLngToCartesian(Location position) {
 		
-		double lat = Math.toRadians(position.latitude);
-	    double lng = Math.toRadians(position.longitude);
+		double lat = Math.toRadians(position.getLatitude());
+	    double lng = Math.toRadians(position.getLongitude());
 	    
 	    double x = Math.cos(lat) * Math.cos(lng);
 	    double y = Math.cos(lat) * Math.sin(lng);
