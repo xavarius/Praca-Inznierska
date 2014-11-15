@@ -46,14 +46,14 @@ public class MarkerMaintenance {
 	
 	public void registerMarkerOnMap(String key, Location position) {	
 		LatLng pos = LocalizationCalculationHelper.geoPointFromLocalization(position);
-		
+		String address = getAdressFromLocation(position);
 		
 		if (allMarkersVisibleOnMap.get(key) != null ) {
 			allMarkersVisibleOnMap.get(key).setPosition(pos);
-			allMarkersVisibleOnMap.get(key).setSnippet(getAdressFromLocation(position));
+			allMarkersVisibleOnMap.get(key).setSnippet(address);
 		} else {
 			Marker currentRetriveMarker 
-				= googleMapInstance.addMarker(getMarkerOptions(key, getAdressFromLocation(position), pos));
+				= googleMapInstance.addMarker(getMarkerOptions(key, address, pos));
 			allMarkersVisibleOnMap.put(key, currentRetriveMarker);
 		}
 		

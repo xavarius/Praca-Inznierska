@@ -7,10 +7,10 @@ import com.google.android.gms.maps.model.LatLng;
 
 public class GeoMidPointAlgorithm {
 	
-	private static HashMap<String, LatLng> allPeoplePositions = 
-												new HashMap<String, LatLng>();
+	private static HashMap<String, LatLng> allPeoplePositions =
+											new HashMap<String, LatLng>();
 	private static HashMap<String, CartesiansCoordinates> allPositionsAsCartesianCoordinates = 
-												new HashMap<String, CartesiansCoordinates>();
+											new HashMap<String, CartesiansCoordinates>();
 	
 	private static double LAT, LNG;
 	public static LatLng geographicMidpoint,
@@ -18,7 +18,6 @@ public class GeoMidPointAlgorithm {
 						 averageLatLng;
 	
 	public static void registerPositions(String key, Location position) {
-		
 		LatLng pos = LocalizationCalculationHelper
 						.geoPointFromLocalization(position);
 		allPeoplePositions.put(key, pos);	

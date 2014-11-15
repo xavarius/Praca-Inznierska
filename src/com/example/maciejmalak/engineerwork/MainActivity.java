@@ -404,9 +404,9 @@ public class MainActivity extends ActionBarActivity
 	                .show();
 		    
 		    MarkerFactory.registerMarkerOnMap(getString(R.string.action_my_start), 
-		    										getPhoneStartingPoint());
+		    								  getPhoneStartingPoint());
 		    GeoMidPointAlgorithm.registerPositions(getString(R.string.action_my_start), 
-		    										getPhoneStartingPoint());
+		    									   getPhoneStartingPoint());
 		}
 	}
     

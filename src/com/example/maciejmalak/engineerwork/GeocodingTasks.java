@@ -15,7 +15,7 @@ public class GeocodingTasks {
 	
 	public GeocodingTasks(Context c) {
 		this.appContext = c;
-		this.coder = new Geocoder(appContext);
+		this.coder = new Geocoder(c);
 	}
 
 	public Location getLocationFromAddress(String enteredAddress){
@@ -26,13 +26,14 @@ public class GeocodingTasks {
 		try {
 		    address = coder.getFromLocationName(enteredAddress,1);
 		    
-		    if (address != null) { 	
+		    if (address != null && address.size() > 0) { 	
 			    Address currentLocation = address.get(0);
 			    currentlyAdding.setLatitude(currentLocation.getLatitude());
 			    currentlyAdding.setLongitude(currentLocation.getLongitude());	
 			    			    
-			    Toast.makeText(appContext,
-			    		currentlyAdding.toString() , Toast.LENGTH_SHORT)
+			    Toast.makeText(appContext, 
+			    		"You have added place: " + enteredAddress,
+			    		Toast.LENGTH_SHORT)
 		                .show();
 			    
 			    return currentlyAdding;
@@ -43,7 +44,6 @@ public class GeocodingTasks {
 		return null;
 	}
 	
-	
 	public String getAdressFromLocation(Location loc){
 		
 		List<Address> address;  
@@ -52,14 +52,11 @@ public class GeocodingTasks {
 		    
 		    if (address != null && address.size() > 0) { 	
 			    Address searchedAddress = address.get(0);
-			    String addressToBeReturned = searchedAddress.getAdminArea() + " " +
-			    		searchedAddress.getCountryCode() + " " +
+			    
+			    String addressToBeReturned = searchedAddress.getThoroughfare() + " " +
 			    		searchedAddress.getFeatureName() + " " +
-			    		searchedAddress.getLocality() + " " +
-			    		searchedAddress.getSubAdminArea() + " " +
-			    		searchedAddress.getThoroughfare();
-			    		
-			    		
+			    		searchedAddress.getSubAdminArea();
+			    				
 			    return addressToBeReturned;
 		    }   
 		} catch (Exception e) { e.printStackTrace(); 
