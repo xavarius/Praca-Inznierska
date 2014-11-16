@@ -1,9 +1,13 @@
 package com.example.maciejmalak.engineerwork;
 
 import java.util.HashMap;
+import java.util.List;
 
 import android.content.Context;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
+import android.os.AsyncTask;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -16,18 +20,20 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MarkerMaintenance {
 	
-	private final static String MEET = "Meeting Place";
-	
 	private GoogleMap googleMapInstance;
 	private Circle circle;
 	private Context appContext;
-	private GeocodingTasks geocoder;
+	private String currentKeyToGeocoder;
+	private LatLng currentPositionToGeocoder;
+	
 	/* We need to store those keys value
 	 * because Resources (R) are only
 	 * accessible from Activity class
 	 */
+	
 	private String startPointKey,
-					currentPointKey;
+					currentPointKey,
+					MEET;
 	
 	private HashMap<String, Marker> allMarkersVisibleOnMap = new HashMap<String, Marker>();
 	
@@ -36,31 +42,31 @@ public class MarkerMaintenance {
 	private float currentPosMarker = BitmapDescriptorFactory.HUE_RED;
 	private float meetingPlaceMarker =   BitmapDescriptorFactory.HUE_MAGENTA;
 
-	public MarkerMaintenance(GoogleMap map, String resourceStartPosition, String resourceCurrPosition, Context appContext){
+	public MarkerMaintenance(GoogleMap map, String resourceStartPosition, 
+								String resourceCurrPosition, Context appContext, String meet){
 		this.googleMapInstance = map;
 		this.currentPointKey = resourceCurrPosition;
 		this.startPointKey = resourceStartPosition;
 		this.appContext = appContext;
-		this.geocoder = new GeocodingTasks(appContext);
+		this.MEET = meet;
 	}
 	
 	public void registerMarkerOnMap(String key, Location position) {	
-		LatLng pos = LocalizationCalculationHelper.geoPointFromLocalization(position);
-		//String address = getAdressFromLocation(position);
-		String address ="anything";
-		if (allMarkersVisibleOnMap.get(key) != null ) {
-			allMarkersVisibleOnMap.get(key).setPosition(pos);
-			allMarkersVisibleOnMap.get(key).setSnippet(address);
-		} else {
-			Marker currentRetriveMarker 
-				= googleMapInstance.addMarker(getMarkerOptions(key, address, pos));
-			allMarkersVisibleOnMap.put(key, currentRetriveMarker);
-		}
 		
-		if ( key == currentPointKey ) {
-			settingCircle(pos ,position.getAccuracy());
-			//googleMapInstance.animateCamera(CameraUpdateFactory.newLatLngZoom(pos, 18.0f));
+		if(key == MEET) {
+			removeMeetingPlaceMarkerFromMap();
+			this.currentKeyToGeocoder = MEET;
+			this.currentPositionToGeocoder = GeoMidPointAlgorithm.geographicMidpointAlgorithm();
+		} else {
+			this.currentKeyToGeocoder = key;
+			this.currentPositionToGeocoder = LocalizationCalculationHelper.geoPointFromLocalization(position);
+			
+			if ( key == currentPointKey ) {
+				settingCircle(this.currentPositionToGeocoder ,position.getAccuracy());
+				//googleMapInstance.animateCamera(CameraUpdateFactory.newLatLngZoom(, 18.0f));
+			}
 		}
+		new ReverseGeocodingTask(appContext).execute(this.currentPositionToGeocoder);
 	}
 	
 	public MarkerOptions getMarkerOptions(String key, String snippet, LatLng pos) {
@@ -103,22 +109,6 @@ public class MarkerMaintenance {
 	
 	public void removingCircle() { if (circle != null) circle.remove(); }
 	
-	public void setMeetingPlace() {
-		removeMeetingPlaceMarkerFromMap();
-		LatLng meetPointLatLng = GeoMidPointAlgorithm.geographicMidpointAlgorithm();
-		Location meetPoint = 
-				LocalizationCalculationHelper.LocalizationFromGeopoint(meetPointLatLng);
-		
-		Marker currentRetriveMarker 
-			= googleMapInstance.addMarker(
-									getMarkerOptions(
-											MEET,
-											getAdressFromLocation(meetPoint),
-											meetPointLatLng
-								));
-		allMarkersVisibleOnMap.put(MEET, currentRetriveMarker);
-	}
-	
 	public void removeMeetingPlaceMarkerFromMap() {
 		if (allMarkersVisibleOnMap.get(MEET) != null) {
 			allMarkersVisibleOnMap.get(MEET).remove();
@@ -136,9 +126,59 @@ public class MarkerMaintenance {
 		}
 		return standardMarker;
 	}
+
+	private class ReverseGeocodingTask extends AsyncTask<LatLng, Void, String>{
+        Context appContext;
+ 
+        public ReverseGeocodingTask(Context context){
+            super();
+            appContext = context;
+        }
+ 
+        @Override
+        protected String doInBackground(LatLng... params) {
+            Geocoder geocoder = new Geocoder(appContext);
+            double latitude = params[0].latitude;
+            double longitude = params[0].longitude;
+            
+            List<Address> address;  
+    		try {
+    		    address = geocoder.getFromLocation(latitude, longitude, 1);
+    		    
+    		    if (address != null && address.size() > 0) { 	
+    			    Address searchedAddress = address.get(0);
+    			    
+    			    String addressToBeReturned = searchedAddress.getThoroughfare() + " " +
+    			    		searchedAddress.getFeatureName() + " " +
+    			    		searchedAddress.getSubAdminArea();
+    			    
+    			    address.clear();	
+    			    return addressToBeReturned;
+    		    }   
+    		} catch (Exception e) { e.printStackTrace(); 
+    		} finally {}
+    		
+    		return "Cannot decode to address";   
+        }
+        
+        @Override
+        protected void onPostExecute(String addressText) {
+
+        	if (allMarkersVisibleOnMap.get(currentKeyToGeocoder) != null ) {
+        		allMarkersVisibleOnMap.get(currentKeyToGeocoder).setPosition(currentPositionToGeocoder);
+        		allMarkersVisibleOnMap.get(currentKeyToGeocoder).setSnippet(addressText);
+        	} else {
+        		Marker currentRetriveMarker 
+        		= googleMapInstance.addMarker(
+        				getMarkerOptions(
+        						currentKeyToGeocoder,
+        						addressText,
+        						currentPositionToGeocoder
+        						));
+        		allMarkersVisibleOnMap.put(currentKeyToGeocoder, currentRetriveMarker);
+        	}
+        }
+    }
 	
-	public String getAdressFromLocation(Location pos) {
-		return this.geocoder.getAdressFromLocation(pos);
-	}
 	
 }

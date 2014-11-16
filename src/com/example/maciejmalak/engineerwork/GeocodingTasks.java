@@ -43,25 +43,4 @@ public class GeocodingTasks {
 		
 		return null;
 	}
-	
-	public String getAdressFromLocation(Location loc){
-		
-		List<Address> address;  
-		try {
-		    address = coder.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
-		    
-		    if (address != null && address.size() > 0) { 	
-			    Address searchedAddress = address.get(0);
-			    
-			    String addressToBeReturned = searchedAddress.getThoroughfare() + " " +
-			    		searchedAddress.getFeatureName() + " " +
-			    		searchedAddress.getSubAdminArea();
-			    				
-			    return addressToBeReturned;
-		    }   
-		} catch (Exception e) { e.printStackTrace(); 
-		} finally {}
-		
-		return "Cannot decode to address";
-	}
 }

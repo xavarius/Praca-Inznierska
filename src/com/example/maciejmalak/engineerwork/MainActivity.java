@@ -84,7 +84,8 @@ public class MainActivity extends ActionBarActivity
         if (map != null) {
         	MarkerFactory = new MarkerMaintenance(
         							map, getString(R.string.action_my_start),
-        							getString(R.string.curr_position), this);
+        							getString(R.string.curr_position), this,
+        							getString(R.string.meet_place));
         }
 
 		/* ----------------- Providers Section ----------------- */
@@ -143,7 +144,7 @@ public class MainActivity extends ActionBarActivity
         
         switch (id) {
         case R.id.meet_place:
-        		MarkerFactory.setMeetingPlace();
+        		setUpMeetingPlace();
         		ifDone = true;
         		break;
         case R.id.friends_point:
@@ -405,6 +406,12 @@ public class MainActivity extends ActionBarActivity
 					.show();
 		}
 	}
+    
+    protected void setUpMeetingPlace() {
+    	MarkerFactory.registerMarkerOnMap(
+    					getString(R.string.meet_place),
+    					getCurrentLocation());
+    }
     
     protected void navigateToNewPointActivity() {
     	Intent newPointIntent = new Intent(this, NewPoint.class);

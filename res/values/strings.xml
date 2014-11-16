@@ -15,7 +15,7 @@
     <string name="net_distabled">Internet Connection is not enabled. It will be needed to display updates of Map.</string>
     <string name="action_my_start">My Start</string>
     <string name="curr_position">Current Position</string>
-    <string name="meet_place">Show Meeting Place</string>
+    <string name="meet_place">Meeting Place</string>
     <string name="on_question">Do you want to turn it on?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
