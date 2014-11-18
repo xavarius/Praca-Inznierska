@@ -106,15 +106,20 @@ public class MainActivity extends ActionBarActivity
     public void onSectionAttached(int number) {
         switch (number) {
             case 1:
-                /*Tutaj wywo³ujemy akcje po naciœniêciu 
-                 * odpowiedniej pozycji liczonej od góry
-                 * w NavigationDrawer						
-                */
+            	map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
                 break;
             case 2:
+            	map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
                 break;
             case 3:
+            	map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
                 break;
+            case 4:
+            	map.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+                break;
+            case 5:
+            	map.setMyLocationEnabled(false);
+            	break;
         }
     }
 

@@ -2,9 +2,11 @@
 <resources>
 
     <string name="app_name">Engineer Work</string>
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
+    <string name="title_section1">Normal</string>
+    <string name="title_section2">Satellite</string>
+    <string name="title_section3">Hybrid</string>
+    <string name="title_section4">Terrain</string>
+    <string name="title_section5">Distable Blue Dot</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_my_place">My Place</string>
