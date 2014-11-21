@@ -24,20 +24,15 @@ public class MarkerMaintenance {
 	private GoogleMap googleMapInstance;
 	private Circle circle;
 	private Context appContext;
-	private String currentKeyToGeocoder;
-	private LatLng currentPositionToGeocoder;
-	
-	/* We need to store those keys value
-	 * because Resources (R) are only
-	 * accessible from Activity class
-	 */
+/*	private String currentKeyToGeocoder;
+	private LatLng currentPositionToGeocoder;*/
 	
 	private String startPointKey,
 					currentPointKey,
 					MEET;
 	
 	private HashMap<String, Marker> allMarkersVisibleOnMap = new HashMap<String, Marker>();
-	private HashMap<String, MarkerDetails> allPositionsAfterGeocoging = new HashMap<String, MarkerDetails>();
+	private HashMap<String, MarkerDetails> allPositionsAfterGeocoding = new HashMap<String, MarkerDetails>();
 	
 	private static final float standardMarker = BitmapDescriptorFactory.HUE_ORANGE;
 	private static final float startMarker =   BitmapDescriptorFactory.HUE_BLUE;
@@ -57,24 +52,17 @@ public class MarkerMaintenance {
 		
 		if(key == MEET) {
 			removeMeetingPlaceMarkerFromMap();
-			this.currentKeyToGeocoder = MEET;
-			this.currentPositionToGeocoder = GeoMidPointAlgorithm.geographicMidpointAlgorithm();
-			allPositionsAfterGeocoging.put(MEET, new MarkerDetails("",currentPositionToGeocoder));
+			LatLng geoMidPoint = GeoMidPointAlgorithm.geographicMidpointAlgorithm();
+			allPositionsAfterGeocoding.put(MEET, new MarkerDetails("",geoMidPoint));
 		} else {
-			this.currentKeyToGeocoder = key;
-			this.currentPositionToGeocoder = LocalizationCalculationHelper.geoPointFromLocalization(position);
-			allPositionsAfterGeocoging.put(key, new MarkerDetails("",currentPositionToGeocoder));
+			LatLng pos = LocalizationCalculationHelper.geoPointFromLocalization(position);
+			allPositionsAfterGeocoding.put(key, new MarkerDetails("",pos));
 			if ( key == currentPointKey ) {
-				settingCircle(this.currentPositionToGeocoder ,position.getAccuracy());
+				settingCircle(pos,position.getAccuracy());
 				//googleMapInstance.animateCamera(CameraUpdateFactory.newLatLngZoom(, 18.0f));
 			}
 		}
-		System.out.println("key " + key + " parametr lokalizacji: " +position.toString());
-
-		System.out.println("zapisany key " + currentKeyToGeocoder + " parametr zapisany: " + currentPositionToGeocoder.toString());
-		
-		new ReverseGeocodingTask(appContext).execute(this.currentPositionToGeocoder);
-		//setMarkers();
+		new ReverseGeocodingTask(appContext).execute();
 	}
 	
 	public MarkerOptions getMarkerOptions(String key, String snippet, LatLng pos) {
@@ -89,6 +77,7 @@ public class MarkerMaintenance {
 	public void removeSelectedMarkerFromMap(String key) {
 		allMarkersVisibleOnMap.get(key).remove();
 		allMarkersVisibleOnMap.remove(key);
+		allPositionsAfterGeocoding.remove(key);
 		GeoMidPointAlgorithm.removePosition(key);
 	}
 	
@@ -102,6 +91,7 @@ public class MarkerMaintenance {
 			GeoMidPointAlgorithm.removePosition(key);
 		}
 		removingCircle();
+		allPositionsAfterGeocoding.clear();
 		allMarkersVisibleOnMap.clear();
 		GeoMidPointAlgorithm.removeAllPosition();
 	}
@@ -121,6 +111,7 @@ public class MarkerMaintenance {
 	public void removeMeetingPlaceMarkerFromMap() {
 		if (allMarkersVisibleOnMap.get(MEET) != null) {
 			allMarkersVisibleOnMap.get(MEET).remove();
+			allPositionsAfterGeocoding.remove(MEET);
 			allMarkersVisibleOnMap.remove(MEET);
 		}
 	}
@@ -136,99 +127,87 @@ public class MarkerMaintenance {
 		return standardMarker;
 	}
 	
-	public void setMarkers() {
-		
-		for (Entry<String, MarkerDetails> entry : allPositionsAfterGeocoging.entrySet()) {
-    	    String currentKeyToGeocoder = entry.getKey();
-    	    LatLng currentPositionToGeocoder;
-    	    MarkerDetails value = entry.getValue();	
-    	    currentPositionToGeocoder = value.pos;
-    	    String addr = value.addr;
-    	    
-    	    System.out.println("addr   " + addr);
-		    System.out.println("key   " + currentKeyToGeocoder);
-		    System.out.println("currentPositionToGeocoder   " + currentPositionToGeocoder.toString());
+	public void setMarkersOnMap() {
+
+		for (Entry<String, MarkerDetails> entry : allPositionsAfterGeocoding.entrySet()) {
+			String currentKeyToGeocoder = entry.getKey();
+			LatLng currentPositionToGeocoder;
+			MarkerDetails value = entry.getValue();	
+			currentPositionToGeocoder = value.pos;
+			String addr = value.addr;
+
 			if (allMarkersVisibleOnMap.get(currentKeyToGeocoder) != null ) {
-	    		allMarkersVisibleOnMap.get(currentKeyToGeocoder).setPosition(currentPositionToGeocoder);
-	    		allMarkersVisibleOnMap.get(currentKeyToGeocoder).setSnippet(addr);
-	    	} else {
-	    		Marker currentRetriveMarker 
-	    		= googleMapInstance.addMarker(
-	    				getMarkerOptions(
-	    						currentKeyToGeocoder,
-	    						addr,
-	    						currentPositionToGeocoder
-	    						));
-	    		allMarkersVisibleOnMap.put(currentKeyToGeocoder, currentRetriveMarker);
-	    	}
+				allMarkersVisibleOnMap.get(currentKeyToGeocoder).setPosition(currentPositionToGeocoder);
+				allMarkersVisibleOnMap.get(currentKeyToGeocoder).setSnippet(addr);
+			} else {
+				Marker currentRetriveMarker 
+				= googleMapInstance.addMarker(
+						getMarkerOptions(
+								currentKeyToGeocoder,
+								addr,
+								currentPositionToGeocoder
+								));
+				allMarkersVisibleOnMap.put(currentKeyToGeocoder, currentRetriveMarker);
+			}
 		}
 	}
 
-	private class ReverseGeocodingTask extends AsyncTask<LatLng, Void, String>{
+	private class ReverseGeocodingTask extends AsyncTask<Void, Void, Void>{
         Context appContext;
  
         public ReverseGeocodingTask(Context context){
             super();
             appContext = context;
         }
- 
-        @Override
-        synchronized protected String doInBackground(LatLng... params) {
-            Geocoder geocoder = new Geocoder(appContext);
-            double latitude = params[0].latitude;
-            double longitude = params[0].longitude;
-            
-            List<Address> address;  
-            
-            
-            	for (Entry<String, MarkerDetails> entry : allPositionsAfterGeocoging.entrySet()) {
-            	    String key = entry.getKey();
-            	    MarkerDetails value = entry.getValue();	
-            	
-            	    if (value.addr == "") {
-            
-    		try {
-    			latitude =value.pos.latitude;
-    			longitude =value.pos.longitude;
-    		    address = geocoder.getFromLocation(latitude, longitude, 1);
-    		    
-    		    if (address != null && address.size() > 0) { 	
-    			    Address searchedAddress = address.get(0);
-    			    
-    			    String addressToBeReturned = searchedAddress.getThoroughfare() + " " +
-    			    		searchedAddress.getFeatureName() + " " +
-    			    		searchedAddress.getSubAdminArea();
-    			    
-    			    address.clear();
-    			    System.out.println("addressToBeReturned   " + addressToBeReturned);
-    			    System.out.println("currentKeyToGeocoder   " + currentKeyToGeocoder);
-    			    System.out.println("currentPositionToGeocoder   " + currentPositionToGeocoder);
-    			    //return addressToBeReturned;
-    			    value.addr = addressToBeReturned;
-    			    System.out.println("value.addr  " + value.addr);
-    			    allPositionsAfterGeocoging.put(key, value);
-    		    }   
-    		} catch (Exception e) { e.printStackTrace(); 
-    		} finally {}
-            } }
-    		
-    		return "Cannot decode to address";   
-        }
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			Geocoder geocoder = new Geocoder(appContext);
+
+        	List<Address> address;  
+
+        	for (Entry<String, MarkerDetails> entry : allPositionsAfterGeocoding.entrySet()) {
+        		String key = entry.getKey();
+        		MarkerDetails value = entry.getValue();	
+
+        		if (value.addr == "") {
+        			try {
         
-        @Override
-        synchronized protected void onPostExecute(String addr) {
-        	setMarkers();
-        }
+        				address = geocoder.getFromLocation(value.pos.latitude, value.pos.longitude, 1);
+
+        				if (address != null && address.size() > 0) { 	
+        					Address searchedAddress = address.get(0);
+
+        					value.addr = searchedAddress.getThoroughfare() + " " +
+        								 searchedAddress.getFeatureName()  + " " +
+        								 searchedAddress.getSubAdminArea();
+
+        					address.clear();
+        					allPositionsAfterGeocoding.put(key, value);
+        				}   
+        			} catch (Exception e) { e.printStackTrace(); 
+        			} finally {}
+        		} }
+			return null;
+		}
+ 
+		@Override
+		   protected void onPostExecute(Void result) {
+			setMarkersOnMap();
+		}
+    
     }
 	
 	private class MarkerDetails {
-		
+
 		protected String addr;
 		protected LatLng pos;
-		
+
 		public MarkerDetails(String addr, LatLng pos ) {
 			this.addr = addr;
 			this.pos = pos;
 		}
 	}
+	
+	
 }
