@@ -46,10 +46,6 @@ public class GeoMidPointAlgorithm {
 		avrY = avrY/amoutOfPositions;
 		avrZ = avrZ/amoutOfPositions;
 	
-		/* Here LNG and LAT are radians.
-		 * We ought to convert them first to degrees 
-		 * and next to LatLng android object
-		 */
 		double hyp = Math.sqrt((avrX*avrX)+(avrY*avrY));
 		LNG = Math.atan2(avrY, avrX);
 		LAT = Math.atan2(avrZ, hyp);
