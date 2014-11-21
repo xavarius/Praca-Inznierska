@@ -98,4 +98,8 @@ public class GeoMidPointAlgorithm {
 	protected static void removePosition(String key) {
 		allPeoplePositions.remove(key);
 	}
+	
+	protected static void removeAllPosition() {
+		allPeoplePositions.clear();
+	}
 }

@@ -95,6 +95,7 @@ public class MarkerMaintenance {
 		}
 		removingCircle();
 		allMarkersVisibleOnMap.clear();
+		GeoMidPointAlgorithm.removeAllPosition();
 	}
 	
 	public void settingCircle(LatLng center, float rad) {
