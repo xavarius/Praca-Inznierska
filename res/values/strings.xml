@@ -30,7 +30,6 @@
 	<string name="remove_all_places">Remove All Markers</string>
 	<string name="not_saved_changes">You didnt save Friends Places</string>
 	<string name="start_pos_is_set">Yours start position is now set to: </string>
-	<string name="start_pos_is_not_set">Yours start position cannot be establish</string>
-	
+	<string name="start_pos_is_not_set">Yours start position cannot be establish</string>	
 	
 </resources>

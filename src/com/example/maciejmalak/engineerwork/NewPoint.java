@@ -16,7 +16,6 @@ import android.widget.EditText;
 
 public class NewPoint extends ActionBarActivity {
 
-	
 	private GeocodingTasks getLoc;
 	private HashMap<String, Location> allPointsProvidedInEditText 
 								= new HashMap<String, Location>();
@@ -38,7 +37,6 @@ public class NewPoint extends ActionBarActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.new_point, menu);
 		return true;
 	}

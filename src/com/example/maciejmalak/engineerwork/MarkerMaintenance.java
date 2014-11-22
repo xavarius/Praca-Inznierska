@@ -21,34 +21,33 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MarkerMaintenance {
 	
+	private static final float standardMarker 	= BitmapDescriptorFactory.HUE_ORANGE;
+	private static final float startMarker 		= BitmapDescriptorFactory.HUE_BLUE;
+	private static final float currentPosMarker = BitmapDescriptorFactory.HUE_RED;
+	private static final float meetingPlaceMarker =   BitmapDescriptorFactory.HUE_MAGENTA;
+	
 	private GoogleMap googleMapInstance;
 	private Circle circle;
 	private Context appContext;
-	private float accuracy;
+	private static float accuracy;
 	
-	private String startPointKey,
-					currentPointKey,
-					MEET;
+	private String STARTPOINT,
+				   CURRPOINT,
+				   MEET;
 	
 	private HashMap<String, Marker> allMarkersVisibleOnMap = new HashMap<String, Marker>();
 	private HashMap<String, MarkerDetails> allPositionsAfterGeocoding = new HashMap<String, MarkerDetails>();
-	
-	private static final float standardMarker = BitmapDescriptorFactory.HUE_ORANGE;
-	private static final float startMarker =   BitmapDescriptorFactory.HUE_BLUE;
-	private static final float currentPosMarker = BitmapDescriptorFactory.HUE_RED;
-	private static final float meetingPlaceMarker =   BitmapDescriptorFactory.HUE_MAGENTA;
 
 	public MarkerMaintenance(GoogleMap map, String resourceStartPosition, 
-								String resourceCurrPosition, Context appContext, String meet){
+							 String resourceCurrPosition, Context appContext, String meet){
 		this.googleMapInstance = map;
-		this.currentPointKey = resourceCurrPosition;
-		this.startPointKey = resourceStartPosition;
-		this.appContext = appContext;
+		this.CURRPOINT = resourceCurrPosition;
+		this.STARTPOINT = resourceStartPosition;
 		this.MEET = meet;
+		this.appContext = appContext;
 	}
 	
 	public void registerMarkerOnMap(String key, Location position) {	
-		
 		if(key == MEET) {
 			removeMeetingPlaceMarkerFromMap();
 			LatLng geoMidPoint = GeoMidPointAlgorithm.geographicMidpointAlgorithm();
@@ -56,11 +55,11 @@ public class MarkerMaintenance {
 		} else {
 			LatLng pos = LocalizationCalculationHelper.geoPointFromLocalization(position);
 			allPositionsAfterGeocoding.put(key, new MarkerDetails("",pos));
-			if ( key == currentPointKey ) {
+			if ( key == CURRPOINT ) {
 				accuracy = position.getAccuracy();
 			}
 		}
-		new ReverseGeocodingTask(appContext).execute();
+		new ReverseGeocodingTask().execute();
 	}
 	
 	public MarkerOptions getMarkerOptions(String key, String snippet, LatLng pos) {
@@ -116,50 +115,46 @@ public class MarkerMaintenance {
 	}
 	
 	public float colorOfMarker(String key) {
-		if (key == currentPointKey) {
+		if (key == CURRPOINT) {
 			return currentPosMarker;
 		} else if (key == MEET) {
 			return meetingPlaceMarker;
-		} else if (key == startPointKey) {
+		} else if (key == STARTPOINT) {
 			return startMarker;
 		}
 		return standardMarker;
 	}
 	
 	public void setMarkersOnMap() {
-
 		for (Entry<String, MarkerDetails> entry : allPositionsAfterGeocoding.entrySet()) {
-			String currentKeyToGeocoder = entry.getKey();
-			LatLng currentPositionToGeocoder;
 			MarkerDetails value = entry.getValue();	
-			currentPositionToGeocoder = value.pos;
+			String key = entry.getKey();
+			LatLng currentPosition = value.pos;
 			String addr = value.addr;
 
-			if (allMarkersVisibleOnMap.get(currentKeyToGeocoder) != null ) {
-				allMarkersVisibleOnMap.get(currentKeyToGeocoder).setPosition(currentPositionToGeocoder);
-				allMarkersVisibleOnMap.get(currentKeyToGeocoder).setSnippet(addr);
+			if (allMarkersVisibleOnMap.get(key) != null ) {
+				allMarkersVisibleOnMap.get(key).setPosition(currentPosition);
+				allMarkersVisibleOnMap.get(key).setSnippet(addr);
 			} else {
 				Marker currentRetriveMarker 
 				= googleMapInstance.addMarker(
 						getMarkerOptions(
-								currentKeyToGeocoder,
+								key,
 								addr,
-								currentPositionToGeocoder
+								currentPosition
 								));
-				allMarkersVisibleOnMap.put(currentKeyToGeocoder, currentRetriveMarker);
+				allMarkersVisibleOnMap.put(key, currentRetriveMarker);
 			}
-			if ( currentKeyToGeocoder == currentPointKey ) {
-				settingCircle(currentPositionToGeocoder,this.accuracy);
+			if ( key == CURRPOINT ) {
+				settingCircle(currentPosition,accuracy);
 			}
 		}
 	}
 
 	private class ReverseGeocodingTask extends AsyncTask<Void, Void, Void>{
-        Context appContext;
  
-        public ReverseGeocodingTask(Context context){
+        public ReverseGeocodingTask(){
             super();
-            appContext = context;
         }
 
 		@Override
@@ -174,17 +169,16 @@ public class MarkerMaintenance {
 
         		if (value.addr == "") {
         			try {
-        
         				address = geocoder.getFromLocation(value.pos.latitude, value.pos.longitude, 1);
-
+        				
         				if (address != null && address.size() > 0) { 	
         					Address searchedAddress = address.get(0);
-
+        					address.clear();
+        					
         					value.addr = searchedAddress.getThoroughfare() + " " +
         								 searchedAddress.getFeatureName()  + " " +
         								 searchedAddress.getSubAdminArea();
 
-        					address.clear();
         					allPositionsAfterGeocoding.put(key, value);
         				}   
         			} catch (Exception e) { e.printStackTrace(); 
@@ -192,16 +186,14 @@ public class MarkerMaintenance {
         		} }
 			return null;
 		}
- 
+		
 		@Override
 		   protected void onPostExecute(Void result) {
 			setMarkersOnMap();
 		}
-    
     }
 	
 	private class MarkerDetails {
-
 		protected String addr;
 		protected LatLng pos;
 
@@ -210,6 +202,4 @@ public class MarkerMaintenance {
 			this.pos = pos;
 		}
 	}
-	
-	
-}
+} /* Marker Maintenance */
