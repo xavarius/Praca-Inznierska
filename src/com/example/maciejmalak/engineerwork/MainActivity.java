@@ -317,15 +317,25 @@ public class MainActivity extends ActionBarActivity
 	    	
 	    	map.setOnMarkerDragListener(new OnMarkerDragListener() {
 	    		 
-                @Override
-                public void onMarkerDragEnd(Marker marker) {
-                    
-                    String key = marker.getTitle();
-                    Location position = 
-                    		LocalizationCalculationHelper.LocalizationFromGeopoint(marker.getPosition());
-                    MarkerFactory.registerMarkerOnMap(key, position);
-                    GeoMidPointAlgorithm.registerPositions(key,position);
-                }
+	    		@Override
+	    		public void onMarkerDragEnd(Marker marker) {
+	    			String key = marker.getTitle();
+	    			if ( getString(R.string.curr_position) != key) {
+
+	    				Location position = 
+	    						LocalizationCalculationHelper.LocalizationFromGeopoint(marker.getPosition());
+	    				MarkerFactory.registerMarkerOnMap(key, position);
+	    				GeoMidPointAlgorithm.registerPositions(key,position);
+
+	    				Toast.makeText(getApplicationContext(),
+	    						key + "  " + position.toString(), Toast.LENGTH_SHORT)
+	    						.show();
+	    			} else {
+	    				Toast.makeText(getApplicationContext(),
+	    						"Cannot drag Current Position Marker", Toast.LENGTH_SHORT)
+	    						.show();
+	    			}
+	    		}
 
 				@Override
 				public void onMarkerDrag(Marker arg0) {
