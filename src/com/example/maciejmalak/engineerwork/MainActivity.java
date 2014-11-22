@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMarkerDragListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.Marker;
 
@@ -312,6 +313,31 @@ public class MainActivity extends ActionBarActivity
                     String key = marker.getTitle();
                     MarkerFactory.removeSelectedMarkerFromMap(key);
                 }
+            });
+	    	
+	    	map.setOnMarkerDragListener(new OnMarkerDragListener() {
+	    		 
+                @Override
+                public void onMarkerDragEnd(Marker marker) {
+                    
+                    String key = marker.getTitle();
+                    Location position = 
+                    		LocalizationCalculationHelper.LocalizationFromGeopoint(marker.getPosition());
+                    MarkerFactory.registerMarkerOnMap(key, position);
+                    GeoMidPointAlgorithm.registerPositions(key,position);
+                }
+
+				@Override
+				public void onMarkerDrag(Marker arg0) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void onMarkerDragStart(Marker arg0) {
+					// TODO Auto-generated method stub
+					
+				}
             });
     	}
     }

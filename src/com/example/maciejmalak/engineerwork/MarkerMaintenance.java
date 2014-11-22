@@ -24,8 +24,7 @@ public class MarkerMaintenance {
 	private GoogleMap googleMapInstance;
 	private Circle circle;
 	private Context appContext;
-/*	private String currentKeyToGeocoder;
-	private LatLng currentPositionToGeocoder;*/
+	private float accuracy;
 	
 	private String startPointKey,
 					currentPointKey,
@@ -58,8 +57,7 @@ public class MarkerMaintenance {
 			LatLng pos = LocalizationCalculationHelper.geoPointFromLocalization(position);
 			allPositionsAfterGeocoding.put(key, new MarkerDetails("",pos));
 			if ( key == currentPointKey ) {
-				settingCircle(pos,position.getAccuracy());
-				//googleMapInstance.animateCamera(CameraUpdateFactory.newLatLngZoom(, 18.0f));
+				accuracy = position.getAccuracy();
 			}
 		}
 		new ReverseGeocodingTask(appContext).execute();
@@ -71,7 +69,8 @@ public class MarkerMaintenance {
 	        .position(pos)
 	        .title(key)
 	        .snippet(snippet)
-	        .icon(BitmapDescriptorFactory.defaultMarker(colorOfMarker));
+	        .icon(BitmapDescriptorFactory.defaultMarker(colorOfMarker))
+	        .draggable(true);
 	}
 	
 	public void removeSelectedMarkerFromMap(String key) {
@@ -148,6 +147,9 @@ public class MarkerMaintenance {
 								currentPositionToGeocoder
 								));
 				allMarkersVisibleOnMap.put(currentKeyToGeocoder, currentRetriveMarker);
+			}
+			if ( currentKeyToGeocoder == currentPointKey ) {
+				settingCircle(currentPositionToGeocoder,this.accuracy);
 			}
 		}
 	}
