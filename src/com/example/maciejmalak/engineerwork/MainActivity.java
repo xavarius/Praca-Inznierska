@@ -29,7 +29,9 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.Marker;
 
 
 public class MainActivity extends ActionBarActivity
@@ -301,6 +303,16 @@ public class MainActivity extends ActionBarActivity
 	    	map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
 	               .getMap();
 	    	map.setMyLocationEnabled(true);
+	    	
+	    	map.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
+	    		 
+                @Override
+                public void onInfoWindowClick(Marker marker) {
+                    
+                    String key = marker.getTitle();
+                    MarkerFactory.removeSelectedMarkerFromMap(key);
+                }
+            });
     	}
     }
     
