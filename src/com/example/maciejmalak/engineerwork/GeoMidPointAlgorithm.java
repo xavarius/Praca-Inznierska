@@ -14,8 +14,8 @@ public class GeoMidPointAlgorithm {
 
 	private static double LAT, LNG;
 	public static LatLng geographicMidpoint,
-	centerMinDistance,
-	averageLatLng;
+						 centerMinDistance,
+						 averageLatLng;
 
 	public static void registerPositions(String key, Location position) {
 		allPeoplePositions.put(key, position);	
@@ -24,12 +24,12 @@ public class GeoMidPointAlgorithm {
 	public static LatLng geographicMidpointAlgorithm() {
 		int amoutOfPositions = 0;
 		double
-		avrX = 0, 
-		avrY = 0,
-		avrZ = 0;
+			avrX = 0, 
+			avrY = 0,
+			avrZ = 0;
 
 		/* Converting stored positions to Cartesian Coordinates */
-		settingContexOfCartesianCoordinatesHashMap();
+		convertLocationToCartesianCoordinates();
 
 		/* Counting center of gravity - geo midpoint */
 		for(Entry<String, CartesiansCoordinates> entry : 
@@ -54,7 +54,7 @@ public class GeoMidPointAlgorithm {
 		return convertRadiansToDegreesAndThenToLatLng(LAT,LNG);
 	}
 
-	protected static void settingContexOfCartesianCoordinatesHashMap() {
+	protected static void convertLocationToCartesianCoordinates() {
 
 		for(Entry<String, Location> entry : allPeoplePositions.entrySet()) {
 			String key = entry.getKey();
