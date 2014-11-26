@@ -80,11 +80,12 @@ public class MarkerMaintenance {
 	}
 	
 	public void removeSelectedMarkerFromMap(String key) {
-		allMarkersVisibleOnMap.get(key).remove();
-		allMarkersVisibleOnMap.remove(key);
-		allPositionsAfterGeocoding.remove(key);
-		GeoMidPointAlgorithm.removePosition(key);
-		if(key == CURRPOINT && circle != null) { circle.remove(); }
+		if (allMarkersVisibleOnMap.get(key) != null) {
+			allMarkersVisibleOnMap.get(key).remove();
+			allMarkersVisibleOnMap.remove(key);
+			allPositionsAfterGeocoding.remove(key);
+			GeoMidPointAlgorithm.removePosition(key);
+		}
 	}
 	
 	public void animateCameraOnMarker(Marker marker) {
