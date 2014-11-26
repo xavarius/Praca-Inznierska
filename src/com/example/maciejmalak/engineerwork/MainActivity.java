@@ -32,6 +32,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerDragListener;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
 
@@ -121,6 +122,9 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 			break;
 		case 5:
 			map.setMyLocationEnabled(false);
+			break;
+		case 6:
+			getPlacesNearbyMeetingPlace();
 			break;
 		}
 	}
@@ -438,6 +442,18 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 			Location val = entry.getValue();
 			MarkerFactory.registerMarkerOnMap(key,val);
 			GeoMidPointAlgorithm.registerPositions(key,val);
+		}
+	}
+	
+	protected void getPlacesNearbyMeetingPlace() {
+		
+		System.out.println("TO JEST MEETIGN PLACE: " + MarkerFactory.getMeetingPlaceLatLng());
+		if(MarkerFactory.getMeetingPlaceLatLng() != null) {
+			LatLng meetingPos = MarkerFactory.getMeetingPlaceLatLng();
+			PlacesAPIMaintenance object = new PlacesAPIMaintenance(this.map);
+			
+			object.settingURI(meetingPos);
+			
 		}
 	}
 } /* Main Activity */
