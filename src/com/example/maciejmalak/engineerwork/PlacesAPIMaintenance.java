@@ -64,7 +64,6 @@ public class PlacesAPIMaintenance {
 	
 	public void removeAllPlaces() {
 		if(placesOnMap != null) {
-			
 			for(Marker marker : placesOnMap) {
 				marker.remove();
 			}
@@ -97,7 +96,6 @@ public class PlacesAPIMaintenance {
 						placesBuilder.append(lineIn);
 					}
 					return placesBuilder.toString();
-
 				}
 			} catch (ClientProtocolException e) {
 				e.printStackTrace();
@@ -110,28 +108,31 @@ public class PlacesAPIMaintenance {
 		@Override
 		protected void onPostExecute(String result) {
 
-			LatLng placeLL=null;
-			String placeName="";
-			JSONObject resultObject;
-			try {
-				resultObject = new JSONObject(result);
-				JSONArray placesArray = resultObject.getJSONArray("results");
+			if(result != null) {
+				LatLng position;
+				String nameOfReturnedPlace;
 
-				for (int p=0; p<placesArray.length(); p++) {
-					JSONObject placeObject = placesArray.getJSONObject(p);
+				JSONObject resultObject;
+				try {
+					resultObject = new JSONObject(result);
+					JSONArray placesArray = resultObject.getJSONArray("results");
 
+					for (int p=0; p<placesArray.length(); p++) {
+						JSONObject placeObject = placesArray.getJSONObject(p);
+						JSONObject loc = placeObject.getJSONObject("geometry").getJSONObject("location");
+						position = new LatLng(
+								Double.valueOf(loc.getString("lat")),
+								Double.valueOf(loc.getString("lng")));
+						
+						nameOfReturnedPlace = placeObject.getString("name");
 
-					JSONObject loc = placeObject.getJSONObject("geometry").getJSONObject("location");
-					placeLL = new LatLng(
-							Double.valueOf(loc.getString("lat")),
-							Double.valueOf(loc.getString("lng")));
-					placeName = placeObject.getString("name");
-					
-					Marker currMarker = map.addMarker(getMarkerOptions(placeName,placeLL));
-					placesOnMap.add(currMarker);
-				}	
-			} catch (JSONException e) {
-				e.printStackTrace();
+						Marker currMarker = map.addMarker(
+								getMarkerOptions(nameOfReturnedPlace,position));
+						placesOnMap.add(currMarker);
+					}	
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	} /* ASync */
