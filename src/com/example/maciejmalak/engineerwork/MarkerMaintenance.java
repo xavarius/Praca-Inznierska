@@ -72,6 +72,13 @@ public class MarkerMaintenance {
 	        .draggable(true);
 	}
 	
+	public LatLng getMeetingPlaceLatLng() {
+		if(allMarkersVisibleOnMap.get(MEET) != null) {
+			return allMarkersVisibleOnMap.get(MEET).getPosition();
+		}
+		return null;
+	}
+	
 	public void removeSelectedMarkerFromMap(String key) {
 		allMarkersVisibleOnMap.get(key).remove();
 		allMarkersVisibleOnMap.remove(key);

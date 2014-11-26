@@ -266,8 +266,7 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 	/* ----------- SETTERS AND GETTERS ----------------------------------------- */ 
 
 	protected Location getCurrentLocation() {
-		Location loc = locationMgr.getLastKnownLocation(providerName);
-		return loc;
+		return locationMgr.getLastKnownLocation(providerName);		
 	}
 
 	public LocationManager getLocationManager() {
@@ -308,10 +307,6 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 							LocalizationCalculationHelper.LocalizationFromGeopoint(marker.getPosition());
 					MarkerFactory.registerMarkerOnMap(key, position);
 					GeoMidPointAlgorithm.registerPositions(key,position);
-
-					Toast.makeText(getApplicationContext(),
-							key + "  " + position.toString(), Toast.LENGTH_SHORT)
-							.show();
 				}
 
 				@Override
@@ -332,8 +327,8 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 	}
 
 	public boolean isInternetEnabled() {
-		ConnectivityManager cManager 
-			=(ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		ConnectivityManager cManager =
+				(ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo netInfo = cManager.getActiveNetworkInfo();
 
 		if (netInfo != null && netInfo.isConnectedOrConnecting()) {
@@ -388,7 +383,7 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					startActivity(
-							new Intent(Settings.ACTION_DATA_ROAMING_SETTINGS)
+							new Intent(Settings.ACTION_WIFI_SETTINGS)
 							);	
 				}
 			} 
@@ -413,11 +408,6 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 
 		this.userStartingPoint = getCurrentLocation();
 		if (this.userStartingPoint != null) {
-
-			Toast.makeText(getApplicationContext(),
-					R.string.start_pos_is_set +
-					this.userStartingPoint.toString(), Toast.LENGTH_SHORT)
-					.show();
 
 			MarkerFactory.registerMarkerOnMap(getString(R.string.action_my_start), 
 					this.userStartingPoint);
