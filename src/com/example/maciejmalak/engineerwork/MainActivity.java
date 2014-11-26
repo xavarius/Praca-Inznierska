@@ -52,6 +52,7 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 	private static GoogleMap map;
 	private LocationManager locationMgr;
 	private MarkerMaintenance MarkerFactory;
+	private PlacesAPIMaintenance placesOnMap;
 	private String providerName;
 	private Criteria criteria;
 	private Location userStartingPoint;
@@ -125,6 +126,9 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 			break;
 		case 6:
 			getPlacesNearbyMeetingPlace();
+			break;
+		case 7:
+			removeNearbyPlaces();
 			break;
 		}
 	}
@@ -446,14 +450,14 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 	}
 	
 	protected void getPlacesNearbyMeetingPlace() {
-		
-		System.out.println("TO JEST MEETIGN PLACE: " + MarkerFactory.getMeetingPlaceLatLng());
 		if(MarkerFactory.getMeetingPlaceLatLng() != null) {
 			LatLng meetingPos = MarkerFactory.getMeetingPlaceLatLng();
-			PlacesAPIMaintenance object = new PlacesAPIMaintenance(this.map);
-			
-			object.settingURI(meetingPos);
-			
+			placesOnMap = new PlacesAPIMaintenance(this.map);
+			placesOnMap.settingURI(meetingPos);	
 		}
+	}
+	
+	protected void removeNearbyPlaces() {
+		if(placesOnMap != null) placesOnMap.removeAllPlaces();
 	}
 } /* Main Activity */

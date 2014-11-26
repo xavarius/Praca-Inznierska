@@ -84,6 +84,7 @@ public class MarkerMaintenance {
 		allMarkersVisibleOnMap.remove(key);
 		allPositionsAfterGeocoding.remove(key);
 		GeoMidPointAlgorithm.removePosition(key);
+		if(key == CURRPOINT && circle != null) { circle.remove(); }
 	}
 	
 	public void animateCameraOnMarker(Marker marker) {

@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -21,139 +23,116 @@ import android.os.AsyncTask;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class PlacesAPIMaintenance {
 	
 	private static final int RESULT_OK = 200;
+	private static final String APIKey = "AIzaSyAFRRQIVS42Gj_fM6KjcuviNdnipQ-YL14";
+	private static List<Marker> placesOnMap = new ArrayList<Marker>();
 	private static String placesURI;
-	private static String APIKey = "AIzaSyAnWTUXFLuv2dUrPxXehSB9GR72cItHSdE";
 	private GoogleMap map;
 	
 	public PlacesAPIMaintenance(GoogleMap map) {
 		this.map = map;
 	}
+	
 	public void settingURI(LatLng position) {
+		
+		removeAllPlaces();
+		
 		double lat = position.latitude;
 		double lng = position.longitude;
 		
 		placesURI = "https://maps.googleapis.com/maps/api/place/nearbysearch/" 
 					+ "json?location="+lat+","+lng
-					+ "&radius=300&sensor=true"
-				/*	+ "&types=food|bar|store|museum|art_gallery"*/
-					+ "&key=AIzaSyAFRRQIVS42Gj_fM6KjcuviNdnipQ-YL14";
+					+ "&radius=1000&sensor=true"
+					/*+ "&types=food|bar|store|museum|art_gallery"*/
+					+ "&key="+APIKey;
 		
-		System.out.println("PRZED EXECUTE"); 
-		System.out.println("PRZED EXECUTE");
-		System.out.println("PRZED EXECUTE");
-		System.out.println("PRZED EXECUTE");
 		new GetPlaces().execute(placesURI);
 	}
 	
-	
 	public MarkerOptions getMarkerOptions(String key, LatLng pos) {
 		
-		System.out.println("w getMarkerOpt i mamy pos" + pos.toString()); 
 		return new MarkerOptions()
 	        .position(pos)
 	        .title(key)
 	        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
 	}
 	
+	public void removeAllPlaces() {
+		if(placesOnMap != null) {
+			
+			for(Marker marker : placesOnMap) {
+				marker.remove();
+			}
+			placesOnMap.clear();
+		}
+	}
 	
 	private class GetPlaces extends AsyncTask<String, Void, String> {
-		
-		
+
 		@Override
 		protected String doInBackground(String... placesURL) {
-			
-			
-			System.out.println("jestesmy w doInBackground   doInBackground  " +
-					"doInBackground   doInBackground   doInBackground");
-			
+
 			StringBuilder placesBuilder = new StringBuilder();
-			
 			HttpClient placesClient = new DefaultHttpClient();
-			
 			HttpGet placesGet = new HttpGet(placesURL[0]);
-			
+
 			try {
 				HttpResponse placesResponse = placesClient.execute(placesGet);
 				StatusLine placeSearchStatus = placesResponse.getStatusLine();
-				
-				if ( placeSearchStatus.getStatusCode() == RESULT_OK) {
-					
-					
+
+				if (placeSearchStatus.getStatusCode() == RESULT_OK) {
+
 					HttpEntity placesEntity = placesResponse.getEntity();
 					InputStream placesContent = placesEntity.getContent();
 					InputStreamReader placesInput = new InputStreamReader(placesContent);
 					BufferedReader placesReader = new BufferedReader(placesInput);
-					
+
 					String lineIn;
 					while ((lineIn = placesReader.readLine()) != null) {
-					    placesBuilder.append(lineIn);
+						placesBuilder.append(lineIn);
 					}
-					
 					return placesBuilder.toString();
-					
-				} else {
-					System.out.println("Coœ siê zjeba³o z PLACES API"); 
-					System.out.println("Coœ siê zjeba³o z PLACES API"); 
-					System.out.println("Coœ siê zjeba³o z PLACES API"); 
-					System.out.println("Coœ siê zjeba³o z PLACES API"); 
-					System.out.println("Coœ siê zjeba³o z PLACES API"); 
-					System.out.println("Coœ siê zjeba³o z PLACES API"); 
-					System.out.println("Coœ siê zjeba³o z PLACES API"); 
-					System.out.println("Coœ siê zjeba³o z PLACES API"); 
+
 				}
 			} catch (ClientProtocolException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			return null;
-		    
 		}
-		
-		
+
 		@Override
-		   protected void onPostExecute(String result) {
-			
-			System.out.println("jestesmy w onPostExecute" + result);
-			
+		protected void onPostExecute(String result) {
+
 			LatLng placeLL=null;
 			String placeName="";
 			JSONObject resultObject;
 			try {
 				resultObject = new JSONObject(result);
 				JSONArray placesArray = resultObject.getJSONArray("results");
-				
-				
+
 				for (int p=0; p<placesArray.length(); p++) {
 					JSONObject placeObject = placesArray.getJSONObject(p);
-					
-					
+
+
 					JSONObject loc = placeObject.getJSONObject("geometry").getJSONObject("location");
 					placeLL = new LatLng(
-						    Double.valueOf(loc.getString("lat")),
-						    Double.valueOf(loc.getString("lng")));
+							Double.valueOf(loc.getString("lat")),
+							Double.valueOf(loc.getString("lng")));
 					placeName = placeObject.getString("name");
 					
-					 map.addMarker(getMarkerOptions(placeName,placeLL));
-					
+					Marker currMarker = map.addMarker(getMarkerOptions(placeName,placeLL));
+					placesOnMap.add(currMarker);
 				}	
 			} catch (JSONException e) {
-				
 				e.printStackTrace();
 			}
-			
 		}
-		
-		
-		} /* ASync */
-	
-	
-
-}
+	} /* ASync */
+} /* PlacesAPIMaintenance */
