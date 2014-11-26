@@ -57,8 +57,6 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 	private Criteria criteria;
 	private Location userStartingPoint;
 
-	/* -------- Implementation of Interfaces Section ------------------------- */
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -85,19 +83,53 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		if (map != null) {
-			MarkerFactory = new MarkerMaintenance(
-					map, getString(R.string.action_my_start),
-					getString(R.string.curr_position), this,
-					getString(R.string.meet_place));
-		}
 
 		/* ----------------- Providers Section ----------------- */
 		checkProvidersNET();
 		checkProvidersGPS();
 	} /* onCreate */
+	
+	protected void loadingObjectOfMainMap() {
+		if( map == null) {
+			map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
+					.getMap();
+			map.setMyLocationEnabled(true);
+			
+			MarkerFactory = new MarkerMaintenance(
+					map, getString(R.string.action_my_start),
+					getString(R.string.curr_position), this,
+					getString(R.string.meet_place));
 
+			map.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
 
+				@Override
+				public void onInfoWindowClick(Marker marker) {
+
+					String key = marker.getTitle();
+					MarkerFactory.removeSelectedMarkerFromMap(key);
+				}
+			});
+
+			map.setOnMarkerDragListener(new OnMarkerDragListener() {
+
+				@Override
+				public void onMarkerDragEnd(Marker marker) {
+					String key = marker.getTitle();
+					Location position = 
+							LocalizationCalculationHelper.LocalizationFromGeopoint(marker.getPosition());
+					MarkerFactory.registerMarkerOnMap(key, position);
+					GeoMidPointAlgorithm.registerPositions(key,position);
+				}
+
+				@Override
+				public void onMarkerDrag(Marker arg0) {}
+
+				@Override
+				public void onMarkerDragStart(Marker arg0) {}
+			});	
+		}
+	}
+	
 	@Override
 	public void onNavigationDrawerItemSelected(int position) {
 		// update the main content by replacing fragments
@@ -177,64 +209,10 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 			break;
 		}
 
-		if (ifDone == true) return true;
+		if (ifDone) return true;
 		return super.onOptionsItemSelected(item);
 	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		if (locationMgr != null) {
-			locationMgr.removeUpdates(this);
-		}
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		locationMgr.requestLocationUpdates(getProviderName(), 400, 1, this);
-		loadingObjectOfMainMap();
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-		if (requestCode == NEW_POINT_ADDER && resultCode == RESULT_OK) {
-			Bundle extras = data.getExtras();
-			if(extras !=null) {
-
-				HashMap<String, Location> allPointsProvidedInNewPoint
-				= (HashMap<String, Location>) 
-				extras.getSerializable("collectionOfPlaces");
-
-				if (allPointsProvidedInNewPoint != null) {
-					storeLocalizationsFromNewPointToMap(allPointsProvidedInNewPoint);
-				}
-			}
-		} else if (resultCode == RESULT_CANCELED) {
-			Toast.makeText(getApplicationContext(),
-					R.string.not_saved_changes, Toast.LENGTH_SHORT)
-					.show();
-		}
-	}
-
-	@Override
-	public void onLocationChanged(Location location) {
-		if (location != null) {
-			MarkerFactory.registerMarkerOnMap(getString(R.string.curr_position),location);
-		}	
-	}
 	
-	@Override
-	public void onStatusChanged(String provider, int status, Bundle extras) {}
-
-	@Override
-	public void onProviderEnabled(String provider) {}
-
-	@Override
-	public void onProviderDisabled(String provider) {}
-
 	public static class PlaceholderFragment extends Fragment {
 		/**
 		 * The fragment argument representing the section number for this
@@ -271,59 +249,43 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 		}
 	}
 
-	/* ----------- SETTERS AND GETTERS ----------------------------------------- */ 
+	@Override
+	protected void onPause() {
+		super.onPause();
+		if (locationMgr != null) {
+			locationMgr.removeUpdates(this);
+		}
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		locationMgr.requestLocationUpdates(providerName, 400, 1, this);
+		loadingObjectOfMainMap();
+	}
+
+	@Override
+	public void onLocationChanged(Location location) {
+		if (location != null) {
+			MarkerFactory.registerMarkerOnMap(getString(R.string.curr_position),location);
+		}	
+	}
+	
+	@Override
+	public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+	@Override
+	public void onProviderEnabled(String provider) {}
+
+	@Override
+	public void onProviderDisabled(String provider) {}
+
+	
+	/* ----------- Others methods ----------------------------------------- */
+	
 
 	protected Location getCurrentLocation() {
 		return locationMgr.getLastKnownLocation(providerName);		
-	}
-
-	public LocationManager getLocationManager() {
-		return locationMgr;
-	}
-
-	public String getProviderName() {
-		return providerName;
-	}
-	
-	/* ----------- Others methods ----------------------------------------- */
-
-	/* Tworzenie obiektu GoogleMap poprzez pobranie referencji do fragmentu 
-	 * layoutu. Pozwolenie na ci¹g³¹ lokalizacjê (niebieska kropka).
-	 */
-	protected void loadingObjectOfMainMap() {
-		if( map == null) {
-			map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
-					.getMap();
-			map.setMyLocationEnabled(true);
-
-			map.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
-
-				@Override
-				public void onInfoWindowClick(Marker marker) {
-
-					String key = marker.getTitle();
-					MarkerFactory.removeSelectedMarkerFromMap(key);
-				}
-			});
-
-			map.setOnMarkerDragListener(new OnMarkerDragListener() {
-
-				@Override
-				public void onMarkerDragEnd(Marker marker) {
-					String key = marker.getTitle();
-					Location position = 
-							LocalizationCalculationHelper.LocalizationFromGeopoint(marker.getPosition());
-					MarkerFactory.registerMarkerOnMap(key, position);
-					GeoMidPointAlgorithm.registerPositions(key,position);
-				}
-
-				@Override
-				public void onMarkerDrag(Marker arg0) {}
-
-				@Override
-				public void onMarkerDragStart(Marker arg0) {}
-			});
-		}
 	}
 
 	protected boolean isGPSEnabled() {
@@ -438,6 +400,29 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 	protected void navigateToNewPointActivity() {
 		Intent newPointIntent = new Intent(this, NewPoint.class);
 		startActivityForResult(newPointIntent,NEW_POINT_ADDER);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+		if (requestCode == NEW_POINT_ADDER && resultCode == RESULT_OK) {
+			Bundle extras = data.getExtras();
+			if(extras !=null) {
+
+				HashMap<String, Location> allPointsProvidedInNewPoint
+				= (HashMap<String, Location>) 
+				extras.getSerializable("collectionOfPlaces");
+
+				if (allPointsProvidedInNewPoint != null) {
+					storeLocalizationsFromNewPointToMap(allPointsProvidedInNewPoint);
+				}
+			}
+		} else if (resultCode == RESULT_CANCELED) {
+			Toast.makeText(getApplicationContext(),
+					R.string.not_saved_changes, Toast.LENGTH_SHORT)
+					.show();
+		}
 	}
 
 	protected void storeLocalizationsFromNewPointToMap(HashMap<String, Location> allPointsProvidedInNewPoint) {
