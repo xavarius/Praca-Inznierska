@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,17 +40,18 @@ public class PlacesAPIMaintenance {
 		this.map = map;
 	}
 	
-	public void settingURI(LatLng position) {
+	public void settingURI(LatLng position) throws UnsupportedEncodingException {
 		
 		removeAllPlaces();
 		
 		double lat = position.latitude;
 		double lng = position.longitude;
+		String types = "subway_station|restaurant|park|night_club|bowling_alley|cafe|food|bar|store|museum|art_gallery|gas_station|hospital";
 		
 		placesURI = "https://maps.googleapis.com/maps/api/place/nearbysearch/" 
 					+ "json?location="+lat+","+lng
 					+ "&radius=1000&sensor=true"
-					/*+ "&types=food|bar|store|museum|art_gallery"*/
+					+ "&types="+URLEncoder.encode(types,"UTF-8")
 					+ "&key="+APIKey;
 		
 		new GetPlaces().execute(placesURI);

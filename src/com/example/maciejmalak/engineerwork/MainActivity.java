@@ -1,5 +1,6 @@
 package com.example.maciejmalak.engineerwork;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -438,7 +439,12 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 		if(MarkerFactory.getMeetingPlaceLatLng() != null) {
 			LatLng meetingPos = MarkerFactory.getMeetingPlaceLatLng();
 			placesOnMap = new PlacesAPIMaintenance(this.map);
-			placesOnMap.settingURI(meetingPos);	
+			try {
+				placesOnMap.settingURI(meetingPos);
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
 		}
 	}
 	
