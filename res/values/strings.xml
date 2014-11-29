@@ -9,6 +9,8 @@
     <string name="title_section5">Distable Blue Dot</string>
     <string name="title_section6">Nearby Places</string>
     <string name="title_section7">Remove Nearby Places</string>
+    <string name="title_section8">Direction</string>
+    <string name="title_section9">Remove Direction</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_my_place">My Place</string>

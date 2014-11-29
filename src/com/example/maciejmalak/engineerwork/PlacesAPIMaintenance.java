@@ -46,7 +46,7 @@ public class PlacesAPIMaintenance {
 		
 		double lat = position.latitude;
 		double lng = position.longitude;
-		String types = "subway_station|restaurant|park|night_club|bowling_alley|cafe|food|bar|store|museum|art_gallery|gas_station|hospital";
+		String types = "subway_station|restaurant|park|night_club|bowling_alley|cafe|food|bar|store|museum|art_gallery|gas_station";
 		
 		placesURI = "https://maps.googleapis.com/maps/api/place/nearbysearch/" 
 					+ "json?location="+lat+","+lng

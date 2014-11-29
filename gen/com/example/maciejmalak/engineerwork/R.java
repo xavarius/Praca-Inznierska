@@ -2239,9 +2239,9 @@ containing a value of this type.
          */
         public static final int abc_shareactionprovider_share_with_application=0x7f060030;
         public static final int accept=0x7f060002;
-        public static final int action_my_place=0x7f06003c;
-        public static final int action_my_start=0x7f060042;
-        public static final int action_settings=0x7f06003d;
+        public static final int action_my_place=0x7f06003e;
+        public static final int action_my_start=0x7f060044;
+        public static final int action_settings=0x7f06003f;
         public static final int app_name=0x7f060032;
         /**   Text for notification shown when the Android Wear apps needs to be updated. Only shown on the wearable. [CHAR LIMIT=NONE] 
          */
@@ -2344,29 +2344,29 @@ containing a value of this type.
         public static final int common_signin_button_text_long=0x7f060020;
         public static final int create_calendar_message=0x7f060005;
         public static final int create_calendar_title=0x7f060004;
-        public static final int curr_position=0x7f060043;
+        public static final int curr_position=0x7f060045;
         public static final int decline=0x7f060003;
-        public static final int done_adding_places=0x7f06004d;
-        public static final int friends_point=0x7f060049;
-        public static final int gps_distabled=0x7f06003f;
-        public static final int gps_enabled=0x7f06003e;
-        public static final int input_place=0x7f06004b;
-        public static final int meet_place=0x7f060044;
-        public static final int navigation_drawer_close=0x7f06003b;
-        public static final int navigation_drawer_open=0x7f06003a;
-        public static final int net_distabled=0x7f060041;
-        public static final int net_enabled=0x7f060040;
-        public static final int new_point=0x7f060048;
-        public static final int no=0x7f060047;
-        public static final int not_saved_changes=0x7f06004f;
-        public static final int on_question=0x7f060045;
-        public static final int remove_all_places=0x7f06004e;
-        public static final int save=0x7f06004c;
-        public static final int start_pos_is_not_set=0x7f060051;
-        public static final int start_pos_is_set=0x7f060050;
+        public static final int done_adding_places=0x7f06004f;
+        public static final int friends_point=0x7f06004b;
+        public static final int gps_distabled=0x7f060041;
+        public static final int gps_enabled=0x7f060040;
+        public static final int input_place=0x7f06004d;
+        public static final int meet_place=0x7f060046;
+        public static final int navigation_drawer_close=0x7f06003d;
+        public static final int navigation_drawer_open=0x7f06003c;
+        public static final int net_distabled=0x7f060043;
+        public static final int net_enabled=0x7f060042;
+        public static final int new_point=0x7f06004a;
+        public static final int no=0x7f060049;
+        public static final int not_saved_changes=0x7f060051;
+        public static final int on_question=0x7f060047;
+        public static final int remove_all_places=0x7f060050;
+        public static final int save=0x7f06004e;
+        public static final int start_pos_is_not_set=0x7f060053;
+        public static final int start_pos_is_set=0x7f060052;
         public static final int store_picture_message=0x7f060001;
         public static final int store_picture_title=0x7f060000;
-        public static final int title_activity_new_point=0x7f06004a;
+        public static final int title_activity_new_point=0x7f06004c;
         public static final int title_section1=0x7f060033;
         public static final int title_section2=0x7f060034;
         public static final int title_section3=0x7f060035;
@@ -2374,11 +2374,13 @@ containing a value of this type.
         public static final int title_section5=0x7f060037;
         public static final int title_section6=0x7f060038;
         public static final int title_section7=0x7f060039;
+        public static final int title_section8=0x7f06003a;
+        public static final int title_section9=0x7f06003b;
         /**  Text on a placeholder buy button when Google Play services is not
          available or up-to-date 
          */
         public static final int wallet_buy_button_place_holder=0x7f060022;
-        public static final int yes=0x7f060046;
+        public static final int yes=0x7f060048;
     }
     public static final class style {
         /** 

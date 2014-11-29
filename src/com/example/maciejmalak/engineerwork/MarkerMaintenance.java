@@ -65,6 +65,13 @@ public class MarkerMaintenance {
 		return null;
 	}
 	
+	public LatLng getStartPlaceLatLng() {
+		if(allMarkersVisibleOnMap.get(STARTPOINT) != null) {
+			return allMarkersVisibleOnMap.get(STARTPOINT).getPosition();
+		}
+		return null;
+	}
+	
 	public void animateCameraOnMarker(Marker marker) {
 		googleMapInstance.animateCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 18.0f));
 	}

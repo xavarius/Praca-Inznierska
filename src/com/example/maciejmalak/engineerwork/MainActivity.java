@@ -1,20 +1,29 @@
 package com.example.maciejmalak.engineerwork;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
@@ -35,6 +44,8 @@ import com.google.android.gms.maps.GoogleMap.OnMarkerDragListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 
 public class MainActivity extends ActionBarActivity
@@ -57,6 +68,7 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 	private String providerName;
 	private Criteria criteria;
 	private Location userStartingPoint;
+	private static List<Polyline> polylineOnMap = new ArrayList<Polyline>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -162,6 +174,12 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 			break;
 		case 7:
 			removeNearbyPlaces();
+			break;
+		case 8:
+			new connectAsyncTask().execute();
+			break;
+		case 9:
+			removePolylineFromMap();
 			break;
 		}
 	}
@@ -380,6 +398,7 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 		this.userStartingPoint = getCurrentLocation();
 		if (this.userStartingPoint != null) {
 
+			System.out.println(userStartingPoint.toString());
 			MarkerFactory.registerMarkerOnMap(getString(R.string.action_my_start), 
 					this.userStartingPoint);
 			GeoMidPointAlgorithm.registerPositions(getString(R.string.action_my_start), 
@@ -442,7 +461,6 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 			try {
 				placesOnMap.settingURI(meetingPos);
 			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}	
 		}
@@ -450,5 +468,144 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 	
 	protected void removeNearbyPlaces() {
 		if(placesOnMap != null) placesOnMap.removeAllPlaces();
+	}
+	
+/* -------------------------------- rysowanie drogi gówno */
+	
+	public void removePolylineFromMap() {
+		if(polylineOnMap!=null) {
+			for(Polyline line : polylineOnMap) {
+				line.remove();
+			}
+			polylineOnMap.clear();
+		}
+		
+	}
+	
+	public String makeURL(){
+		double sourcelat, sourcelog,  destlat, destlog;
+		
+		LatLng meetPos = MarkerFactory.getMeetingPlaceLatLng();
+		LatLng startPos = MarkerFactory.getStartPlaceLatLng();
+		
+	/*	destlat = 51.079384; //meetPos.latitude;
+		destlog = 17.033746;//meetPos.longitude;
+		sourcelat = 51.679384; //startPos.latitude;
+		sourcelog = 17.533746;//startPos.longitude;
+	 */		
+		if(meetPos != null && startPos != null) {
+			destlat = 51.079384; //meetPos.latitude;
+			destlog = 17.033746;//meetPos.longitude;
+			sourcelat = 51.679384; //startPos.latitude;
+			sourcelog = 17.533746;//startPos.longitude;
+				
+			StringBuilder urlString = new StringBuilder();
+			urlString.append("http://maps.googleapis.com/maps/api/directions/json");
+			urlString.append("?origin=");
+			urlString.append(Double.toString(sourcelat));
+			urlString.append(",");
+			urlString
+			.append(Double.toString( sourcelog));
+			urlString.append("&destination=");// to
+			urlString
+			.append(Double.toString( destlat));
+			urlString.append(",");
+			urlString.append(Double.toString( destlog));
+			urlString.append("&sensor=false&mode=driving&alternatives=true");
+			return urlString.toString(); 
+		}
+	}
+
+	
+	public void drawPath(String  result) {
+
+	    try {
+	           final JSONObject json = new JSONObject(result);
+	           JSONArray routeArray = json.getJSONArray("routes");
+	           JSONObject routes = routeArray.getJSONObject(0);
+	           JSONObject overviewPolylines = routes.getJSONObject("overview_polyline");
+	           String encodedString = overviewPolylines.getString("points");
+	           List<LatLng> list = decodePoly(encodedString);
+
+	           for(int z = 0; z<list.size()-1;z++){
+	                LatLng src= list.get(z);
+	                LatLng dest= list.get(z+1);
+	                Polyline line = map.addPolyline(new PolylineOptions()
+	                .add(new LatLng(src.latitude, src.longitude), new LatLng(dest.latitude,   dest.longitude))
+	                .width(5)
+	                .color(Color.RED).geodesic(true));
+	                polylineOnMap.add(line);
+	            }
+
+	    } 
+	    catch (JSONException e) {
+
+	    }
+	}
+	
+	private List<LatLng> decodePoly(String encoded) {
+
+	    List<LatLng> poly = new ArrayList<LatLng>();
+	    int index = 0, len = encoded.length();
+	    int lat = 0, lng = 0;
+
+	    while (index < len) {
+	        int b, shift = 0, result = 0;
+	        do {
+	            b = encoded.charAt(index++) - 63;
+	            result |= (b & 0x1f) << shift;
+	            shift += 5;
+	        } while (b >= 0x20);
+	        int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+	        lat += dlat;
+
+	        shift = 0;
+	        result = 0;
+	        do {
+	            b = encoded.charAt(index++) - 63;
+	            result |= (b & 0x1f) << shift;
+	            shift += 5;
+	        } while (b >= 0x20);
+	        int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+	        lng += dlng;
+
+	        LatLng p = new LatLng( (((double) lat / 1E5)),
+	                 (((double) lng / 1E5) ));
+	        poly.add(p);
+	    }
+
+	    return poly;
+	}
+	
+	private class connectAsyncTask extends AsyncTask<Void, Void, String>{
+	    private ProgressDialog progressDialog;
+	    
+	    @Override
+	    protected void onPreExecute() {
+	       
+	        super.onPreExecute();
+	        progressDialog = new ProgressDialog(MainActivity.this);
+	        progressDialog.setMessage("Fetching route, Please wait...");
+	        progressDialog.setIndeterminate(true);
+	        progressDialog.show();
+	    }
+	    @Override
+	    protected String doInBackground(Void... params) {
+	    	String URI = makeURL();
+	    	if(URI != null) {
+	    		JSONParser jParser = new JSONParser();
+	    		String json = jParser.getJSONFromUrl(URI);
+	    		return json;
+	    	}
+	    	return null;
+	    }
+	    @Override
+	    protected void onPostExecute(String result) {
+	        super.onPostExecute(result);   
+	        progressDialog.hide();        
+	        if(result!=null){
+	            drawPath(result);
+	        }
+	    }
 	}
 } /* Main Activity */
