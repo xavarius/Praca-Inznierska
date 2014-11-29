@@ -178,12 +178,15 @@ public class MainActivity extends ActionBarActivity
 		case 8:
 			removeNearbyPlaces();
 			break;
-		case 9:
+		case 9: 
+			removeAllObjectsFromMap();
+			break;
+		case 10:
 			map.setMyLocationEnabled(false);
 			break;
 		}
 	}
-
+	
 	@SuppressWarnings("deprecation")
 	public void restoreActionBar() {
 		ActionBar actionBar = getSupportActionBar();
@@ -215,10 +218,6 @@ public class MainActivity extends ActionBarActivity
 			break;
 		case R.id.friends_point:
 			navigateToNewPointActivity();
-			ifDone = true;
-			break;
-		case R.id.remove_all_places:
-			MarkerFactory.clearMarkerMap();
 			ifDone = true;
 			break;
 		case R.id.action_my_place:
@@ -414,6 +413,12 @@ public class MainActivity extends ActionBarActivity
 				getString(R.string.meet_place),
 				getCurrentLocation());
 	}
+	
+	public void removeAllObjectsFromMap() {
+		MarkerFactory.clearMarkerMap();
+		removePolylineFromMap();
+		removeNearbyPlaces();
+	}
 
 	protected void navigateToNewPointActivity() {
 		Intent newPointIntent = new Intent(this, NewPoint.class);
@@ -454,7 +459,7 @@ public class MainActivity extends ActionBarActivity
 	protected void getPlacesNearbyMeetingPlace() {
 		if(MarkerFactory.getMeetingPlaceLatLng() != null) {
 			LatLng meetingPos = MarkerFactory.getMeetingPlaceLatLng();
-			placesOnMap = new PlacesAPIMaintenance(map);
+			placesOnMap = new PlacesAPIMaintenance(map, MainActivity.this);
 			try {
 				placesOnMap.settingURI(meetingPos);
 			} catch (UnsupportedEncodingException e) {

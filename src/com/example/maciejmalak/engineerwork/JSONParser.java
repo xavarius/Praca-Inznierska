@@ -4,54 +4,49 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONObject;
-
-import android.util.Log;
 
 public class JSONParser {
-
-    static InputStream is = null;
-    static JSONObject jObj = null;
-    static String json = "";
+	
+	private static final int RESULT_OK = 200;
 
     public static String getJSONFromUrl(String url) {
+    	
+    	StringBuilder placesBuilder = new StringBuilder();
+		HttpClient placesClient = new DefaultHttpClient();
+		HttpGet placesGet = new HttpGet(url);
 
-        try {
-            DefaultHttpClient httpClient = new DefaultHttpClient();
-            HttpPost httpPost = new HttpPost(url);
+		try {
+			HttpResponse placesResponse = placesClient.execute(placesGet);
+			StatusLine placeSearchStatus = placesResponse.getStatusLine();
 
-            HttpResponse httpResponse = httpClient.execute(httpPost);
-            HttpEntity httpEntity = httpResponse.getEntity();
-            is = httpEntity.getContent();     
-            
-            BufferedReader reader = new BufferedReader(new InputStreamReader(
-                    is, "iso-8859-1"), 8);
-            StringBuilder sb = new StringBuilder();
-            String line = null;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line + "\n");
-            }
+			if (placeSearchStatus.getStatusCode() == RESULT_OK) {
 
-            json = sb.toString();
-            is.close();
+				HttpEntity placesEntity = placesResponse.getEntity();
+				InputStream placesContent = placesEntity.getContent();
+				InputStreamReader placesInput = new InputStreamReader(placesContent);
+				BufferedReader placesReader = new BufferedReader(placesInput);
 
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace(); 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return json;
-
+				String lineIn;
+				while ((lineIn = placesReader.readLine()) != null) {
+					placesBuilder.append(lineIn);
+				}
+				placesContent.close();
+				placesReader.close();
+				return placesBuilder.toString();
+			}
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
     }
 }

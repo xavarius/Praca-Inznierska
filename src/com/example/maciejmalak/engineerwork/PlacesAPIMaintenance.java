@@ -1,25 +1,16 @@
 package com.example.maciejmalak.engineerwork;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -29,15 +20,16 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class PlacesAPIMaintenance {
-	
-	private static final int RESULT_OK = 200;
+
 	private static final String APIKey = "AIzaSyAFRRQIVS42Gj_fM6KjcuviNdnipQ-YL14";
 	private static List<Marker> placesOnMap = new ArrayList<Marker>();
 	private static String placesURI;
 	private GoogleMap map;
+	private Context app;
 	
-	public PlacesAPIMaintenance(GoogleMap map) {
+	public PlacesAPIMaintenance(GoogleMap map, Context app) {
 		this.map = map;
+		this.app = app;
 	}
 	
 	public void settingURI(LatLng position) throws UnsupportedEncodingException {
@@ -75,42 +67,25 @@ public class PlacesAPIMaintenance {
 	}
 	
 	private class GetPlaces extends AsyncTask<String, Void, String> {
+		private ProgressDialog progressDialog;
+		
+		@Override
+		protected void onPreExecute() {
+
+			super.onPreExecute();
+			progressDialog = new ProgressDialog(app);
+			progressDialog.setMessage("Downloading nearby places");
+			progressDialog.show();
+		}
 
 		@Override
 		protected String doInBackground(String... placesURL) {
-
-			StringBuilder placesBuilder = new StringBuilder();
-			HttpClient placesClient = new DefaultHttpClient();
-			HttpGet placesGet = new HttpGet(placesURL[0]);
-
-			try {
-				HttpResponse placesResponse = placesClient.execute(placesGet);
-				StatusLine placeSearchStatus = placesResponse.getStatusLine();
-
-				if (placeSearchStatus.getStatusCode() == RESULT_OK) {
-
-					HttpEntity placesEntity = placesResponse.getEntity();
-					InputStream placesContent = placesEntity.getContent();
-					InputStreamReader placesInput = new InputStreamReader(placesContent);
-					BufferedReader placesReader = new BufferedReader(placesInput);
-
-					String lineIn;
-					while ((lineIn = placesReader.readLine()) != null) {
-						placesBuilder.append(lineIn);
-					}
-					return placesBuilder.toString();
-				}
-			} catch (ClientProtocolException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			return null;
+			return JSONParser.getJSONFromUrl(placesURL[0]);
 		}
 
 		@Override
 		protected void onPostExecute(String result) {
-
+			progressDialog.hide();
 			if(result != null) {
 				LatLng position;
 				String nameOfReturnedPlace;
