@@ -49,7 +49,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 
 public class MainActivity extends ActionBarActivity
-implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener {
+	implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener {
 
 	private static final int NEW_POINT_ADDER = 1;
 	/**
@@ -57,9 +57,8 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 	 */
 	private NavigationDrawerFragment mNavigationDrawerFragment;
 
-	/**
-	 * Used to store the last screen title. For use in {@link #restoreActionBar()}.
-	 */
+	private static List<Polyline> polylineOnMap = new ArrayList<Polyline>();
+
 	private CharSequence appTitle;
 	private static GoogleMap map;
 	private LocationManager locationMgr;
@@ -68,8 +67,6 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 	private String providerName;
 	private static String DIRECTION_URI;
 	private Criteria criteria;
-	private Location userStartingPoint;
-	private static List<Polyline> polylineOnMap = new ArrayList<Polyline>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -102,13 +99,13 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 		checkProvidersNET();
 		checkProvidersGPS();
 	} /* onCreate */
-	
+
 	protected void loadingObjectOfMainMap() {
 		if( map == null) {
 			map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
 					.getMap();
 			map.setMyLocationEnabled(true);
-			
+
 			MarkerFactory = new MarkerMaintenance(
 					map, getString(R.string.action_my_start),
 					getString(R.string.curr_position), this,
@@ -143,7 +140,7 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 			});	
 		}
 	}
-	
+
 	@Override
 	public void onNavigationDrawerItemSelected(int position) {
 		// update the main content by replacing fragments
@@ -233,7 +230,7 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 		if (ifDone) return true;
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 	public static class PlaceholderFragment extends Fragment {
 		/**
 		 * The fragment argument representing the section number for this
@@ -291,7 +288,7 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 			MarkerFactory.registerMarkerOnMap(getString(R.string.curr_position),location);
 		}	
 	}
-	
+
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {}
 
@@ -301,9 +298,8 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 	@Override
 	public void onProviderDisabled(String provider) {}
 
-	
+
 	/* ----------- Others methods ----------------------------------------- */
-	
 
 	protected Location getCurrentLocation() {
 		return locationMgr.getLastKnownLocation(providerName);		
@@ -311,7 +307,7 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 
 	protected boolean isGPSEnabled() {
 		if(locationMgr != null
-				&&	locationMgr.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) {
+		   && locationMgr.isProviderEnabled(android.location.LocationManager.GPS_PROVIDER)) {
 			return true;
 		}
 		return false;
@@ -341,7 +337,7 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 				public void onClick(DialogInterface dialog, int which) {
 					startActivity(
 							new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-							);	
+					);	
 				}
 			} 
 					)
@@ -375,7 +371,7 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 				public void onClick(DialogInterface dialog, int which) {
 					startActivity(
 							new Intent(Settings.ACTION_WIFI_SETTINGS)
-							);	
+					);	
 				}
 			} 
 					)
@@ -396,15 +392,14 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 	}
 
 	protected void setUpStartingLocation() {
+		Location start = getCurrentLocation();
+		
+		if (start != null) {
 
-		this.userStartingPoint = getCurrentLocation();
-		if (this.userStartingPoint != null) {
-
-			System.out.println(userStartingPoint.toString());
 			MarkerFactory.registerMarkerOnMap(getString(R.string.action_my_start), 
-					this.userStartingPoint);
+					start);
 			GeoMidPointAlgorithm.registerPositions(getString(R.string.action_my_start), 
-					this.userStartingPoint);
+					start);
 		} else {
 			Toast.makeText(getApplicationContext(),
 					R.string.start_pos_is_not_set, 
@@ -423,7 +418,7 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 		Intent newPointIntent = new Intent(this, NewPoint.class);
 		startActivityForResult(newPointIntent,NEW_POINT_ADDER);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -433,8 +428,7 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 			if(extras !=null) {
 
 				HashMap<String, Location> allPointsProvidedInNewPoint
-				= (HashMap<String, Location>) 
-				extras.getSerializable("collectionOfPlaces");
+					= (HashMap<String, Location>) extras.getSerializable("collectionOfPlaces");
 
 				if (allPointsProvidedInNewPoint != null) {
 					storeLocalizationsFromNewPointToMap(allPointsProvidedInNewPoint);
@@ -455,11 +449,11 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 			GeoMidPointAlgorithm.registerPositions(key,val);
 		}
 	}
-	
+
 	protected void getPlacesNearbyMeetingPlace() {
 		if(MarkerFactory.getMeetingPlaceLatLng() != null) {
 			LatLng meetingPos = MarkerFactory.getMeetingPlaceLatLng();
-			placesOnMap = new PlacesAPIMaintenance(this.map);
+			placesOnMap = new PlacesAPIMaintenance(map);
 			try {
 				placesOnMap.settingURI(meetingPos);
 			} catch (UnsupportedEncodingException e) {
@@ -467,13 +461,11 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 			}	
 		}
 	}
-	
+
 	protected void removeNearbyPlaces() {
 		if(placesOnMap != null) placesOnMap.removeAllPlaces();
 	}
-	
-/* -------------------------------- rysowanie drogi gówno */
-	
+
 	public void removePolylineFromMap() {
 		if(polylineOnMap!=null) {
 			for(Polyline line : polylineOnMap) {
@@ -481,36 +473,31 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 			}
 			polylineOnMap.clear();
 		}
-		
 	}
-	
+
 	public void makeURLForDirectionRequest(){
-		double sourcelat, sourcelog,  destlat, destlog;
-		
+
 		LatLng meetPos = MarkerFactory.getMeetingPlaceLatLng();
 		LatLng startPos = MarkerFactory.getStartPlaceLatLng();
-	
-		System.out.println(meetPos.toString());
-		System.out.println(startPos.toString());
-		
+
 		if(meetPos != null && startPos != null) {
-			destlat = meetPos.latitude;
-			destlog = meetPos.longitude;
-			sourcelat = startPos.latitude;
-			sourcelog = startPos.longitude;
-				
+			double meet_latitude = meetPos.latitude;
+			double meet_logitude = meetPos.longitude;
+			double start_latitude = startPos.latitude;
+			double start_logitude = startPos.longitude;
+
 			StringBuilder urlString = new StringBuilder();
 			urlString.append("http://maps.googleapis.com/maps/api/directions/json");
 			urlString.append("?origin=");
-			urlString.append(Double.toString(sourcelat));
+			urlString.append(Double.toString(start_latitude));
 			urlString.append(",");
 			urlString
-			.append(Double.toString( sourcelog));
+			.append(Double.toString( start_logitude));
 			urlString.append("&destination=");// to
 			urlString
-			.append(Double.toString( destlat));
+			.append(Double.toString( meet_latitude));
 			urlString.append(",");
-			urlString.append(Double.toString( destlog));
+			urlString.append(Double.toString( meet_logitude));
 			urlString.append("&sensor=false&mode=driving&alternatives=true");
 			DIRECTION_URI =  urlString.toString(); 
 		} else {
@@ -520,96 +507,96 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 		}
 	}
 
-	
+
 	public void drawPath(String  result) {
 
-	    try {
-	           final JSONObject json = new JSONObject(result);
-	           JSONArray routeArray = json.getJSONArray("routes");
-	           JSONObject routes = routeArray.getJSONObject(0);
-	           JSONObject overviewPolylines = routes.getJSONObject("overview_polyline");
-	           String encodedString = overviewPolylines.getString("points");
-	           List<LatLng> list = decodePoly(encodedString);
+		try {
+			final JSONObject json = new JSONObject(result);
+			JSONArray routeArray = json.getJSONArray("routes");
+			JSONObject routes = routeArray.getJSONObject(0);
+			JSONObject overviewPolylines = routes.getJSONObject("overview_polyline");
+			String encodedString = overviewPolylines.getString("points");
+			List<LatLng> list = decodePoly(encodedString);
 
-	           for(int z = 0; z<list.size()-1;z++){
-	                LatLng src= list.get(z);
-	                LatLng dest= list.get(z+1);
-	                Polyline line = map.addPolyline(new PolylineOptions()
-	                .add(new LatLng(src.latitude, src.longitude), new LatLng(dest.latitude,   dest.longitude))
-	                .width(5)
-	                .color(Color.RED).geodesic(true));
-	                polylineOnMap.add(line);
-	            }
+			for(int z = 0; z<list.size()-1;z++){
+				LatLng src= list.get(z);
+				LatLng dest= list.get(z+1);
+				Polyline line = map.addPolyline(new PolylineOptions()
+				.add(new LatLng(src.latitude, src.longitude), new LatLng(dest.latitude,   dest.longitude))
+				.width(5)
+				.color(Color.RED).geodesic(true));
+				polylineOnMap.add(line);
+			}
 
-	    } 
-	    catch (JSONException e) {
+		} 
+		catch (JSONException e) {
 
-	    }
+		}
 	}
-	
+
 	private List<LatLng> decodePoly(String encoded) {
 
-	    List<LatLng> poly = new ArrayList<LatLng>();
-	    int index = 0, len = encoded.length();
-	    int lat = 0, lng = 0;
+		List<LatLng> poly = new ArrayList<LatLng>();
+		int index = 0, len = encoded.length();
+		int lat = 0, lng = 0;
 
-	    while (index < len) {
-	        int b, shift = 0, result = 0;
-	        do {
-	            b = encoded.charAt(index++) - 63;
-	            result |= (b & 0x1f) << shift;
-	            shift += 5;
-	        } while (b >= 0x20);
-	        int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
-	        lat += dlat;
+		while (index < len) {
+			int b, shift = 0, result = 0;
+			do {
+				b = encoded.charAt(index++) - 63;
+				result |= (b & 0x1f) << shift;
+				shift += 5;
+			} while (b >= 0x20);
+			int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+			lat += dlat;
 
-	        shift = 0;
-	        result = 0;
-	        do {
-	            b = encoded.charAt(index++) - 63;
-	            result |= (b & 0x1f) << shift;
-	            shift += 5;
-	        } while (b >= 0x20);
-	        int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
-	        lng += dlng;
+			shift = 0;
+			result = 0;
+			do {
+				b = encoded.charAt(index++) - 63;
+				result |= (b & 0x1f) << shift;
+				shift += 5;
+			} while (b >= 0x20);
+			int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+			lng += dlng;
 
-	        LatLng p = new LatLng( (((double) lat / 1E5)),
-	                 (((double) lng / 1E5) ));
-	        poly.add(p);
-	    }
+			LatLng p = new LatLng( (((double) lat / 1E5)),
+					(((double) lng / 1E5) ));
+			poly.add(p);
+		}
 
-	    return poly;
+		return poly;
 	}
-	
+
 	private class connectAsyncTask extends AsyncTask<Void, Void, String>{
-	    private ProgressDialog progressDialog;
-	    
-	    @Override
-	    protected void onPreExecute() {
-	       
-	        super.onPreExecute();
-	        progressDialog = new ProgressDialog(MainActivity.this);
-	        progressDialog.setMessage("Fetching route, Please wait...");
-	        progressDialog.setIndeterminate(true);
-	        progressDialog.show();
-	    }
-	    @Override
-	    protected String doInBackground(Void... params) {
-	    	
-	    	if(DIRECTION_URI != null) {
-	    		JSONParser jParser = new JSONParser();
-	    		String json = jParser.getJSONFromUrl(DIRECTION_URI);
-	    		return json;
-	    	}
-	    	return null;
-	    }
-	    @Override
-	    protected void onPostExecute(String result) {
-	        super.onPostExecute(result);   
-	        progressDialog.hide();        
-	        if(result!=null){
-	            drawPath(result);
-	        }
-	    }
+		private ProgressDialog progressDialog;
+
+		@Override
+		protected void onPreExecute() {
+
+			super.onPreExecute();
+			progressDialog = new ProgressDialog(MainActivity.this);
+			progressDialog.setMessage("Fetching route, Please wait...");
+			progressDialog.setIndeterminate(true);
+			progressDialog.show();
+		}
+		@Override
+		protected String doInBackground(Void... params) {
+
+			if(DIRECTION_URI != null) {
+				JSONParser jParser = new JSONParser();
+				String json = jParser.getJSONFromUrl(DIRECTION_URI);
+				return json;
+			}
+			return null;
+		}
+		@Override
+		protected void onPostExecute(String result) {
+			super.onPostExecute(result);   
+			progressDialog.hide();        
+			if(result!=null){
+				drawPath(result);
+			}
+		}
 	}
 } /* Main Activity */
