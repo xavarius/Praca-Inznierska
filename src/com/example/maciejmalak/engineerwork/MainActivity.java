@@ -485,21 +485,15 @@ public class MainActivity extends ActionBarActivity
 			double meet_logitude = meetPos.longitude;
 			double start_latitude = startPos.latitude;
 			double start_logitude = startPos.longitude;
-
-			StringBuilder urlString = new StringBuilder();
-			urlString.append("http://maps.googleapis.com/maps/api/directions/json");
-			urlString.append("?origin=");
-			urlString.append(Double.toString(start_latitude));
-			urlString.append(",");
-			urlString
-			.append(Double.toString( start_logitude));
-			urlString.append("&destination=");// to
-			urlString
-			.append(Double.toString( meet_latitude));
-			urlString.append(",");
-			urlString.append(Double.toString( meet_logitude));
-			urlString.append("&sensor=false&mode=driving&alternatives=true");
-			DIRECTION_URI =  urlString.toString(); 
+			
+			String uri = "";
+			
+			uri = "http://maps.googleapis.com/maps/api/directions/json" 
+					+ "?origin=" + Double.toString(start_latitude) + "," + Double.toString( start_logitude)
+					+ "&destination=" + Double.toString(meet_latitude) + "," + Double.toString( meet_logitude)
+					+ "&sensor=false&mode=driving&alternatives=true";
+					
+			DIRECTION_URI =  uri;
 		} else {
 			Toast.makeText(getApplicationContext(),
 					R.string.cannot_dir, Toast.LENGTH_SHORT)
@@ -508,7 +502,7 @@ public class MainActivity extends ActionBarActivity
 	}
 
 
-	public void drawPath(String  result) {
+	public void drowPolylineFromStartTOMeet(String  result) {
 
 		try {
 			final JSONObject json = new JSONObject(result);
@@ -516,7 +510,7 @@ public class MainActivity extends ActionBarActivity
 			JSONObject routes = routeArray.getJSONObject(0);
 			JSONObject overviewPolylines = routes.getJSONObject("overview_polyline");
 			String encodedString = overviewPolylines.getString("points");
-			List<LatLng> list = decodePoly(encodedString);
+			List<LatLng> list = decodePolyline(encodedString);
 
 			for(int z = 0; z<list.size()-1;z++){
 				LatLng src= list.get(z);
@@ -527,14 +521,13 @@ public class MainActivity extends ActionBarActivity
 				.color(Color.RED).geodesic(true));
 				polylineOnMap.add(line);
 			}
-
 		} 
 		catch (JSONException e) {
 
 		}
 	}
 
-	private List<LatLng> decodePoly(String encoded) {
+	private List<LatLng> decodePolyline(String encoded) {
 
 		List<LatLng> poly = new ArrayList<LatLng>();
 		int index = 0, len = encoded.length();
@@ -564,7 +557,6 @@ public class MainActivity extends ActionBarActivity
 					(((double) lng / 1E5) ));
 			poly.add(p);
 		}
-
 		return poly;
 	}
 
@@ -576,13 +568,11 @@ public class MainActivity extends ActionBarActivity
 
 			super.onPreExecute();
 			progressDialog = new ProgressDialog(MainActivity.this);
-			progressDialog.setMessage("Fetching route, Please wait...");
-			progressDialog.setIndeterminate(true);
+			progressDialog.setMessage(getString(R.string.route));
 			progressDialog.show();
 		}
 		@Override
 		protected String doInBackground(Void... params) {
-
 			if(DIRECTION_URI != null) {
 				JSONParser jParser = new JSONParser();
 				String json = jParser.getJSONFromUrl(DIRECTION_URI);
@@ -592,11 +582,11 @@ public class MainActivity extends ActionBarActivity
 		}
 		@Override
 		protected void onPostExecute(String result) {
-			super.onPostExecute(result);   
-			progressDialog.hide();        
+			super.onPostExecute(result);           
 			if(result!=null){
-				drawPath(result);
+				drowPolylineFromStartTOMeet(result);
 			}
+			progressDialog.hide();
 		}
 	}
 } /* Main Activity */

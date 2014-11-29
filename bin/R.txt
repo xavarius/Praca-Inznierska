@@ -625,6 +625,7 @@ int string no 0x7f060049
 int string not_saved_changes 0x7f060051
 int string on_question 0x7f060047
 int string remove_all_places 0x7f060050
+int string route 0x7f060055
 int string save 0x7f06004e
 int string start_pos_is_not_set 0x7f060053
 int string start_pos_is_set 0x7f060052

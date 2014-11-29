@@ -2362,6 +2362,7 @@ containing a value of this type.
         public static final int not_saved_changes=0x7f060051;
         public static final int on_question=0x7f060047;
         public static final int remove_all_places=0x7f060050;
+        public static final int route=0x7f060055;
         public static final int save=0x7f06004e;
         public static final int start_pos_is_not_set=0x7f060053;
         public static final int start_pos_is_set=0x7f060052;
