@@ -2243,6 +2243,7 @@ containing a value of this type.
         public static final int action_my_start=0x7f060044;
         public static final int action_settings=0x7f06003f;
         public static final int app_name=0x7f060032;
+        public static final int cannot_dir=0x7f060054;
         /**   Text for notification shown when the Android Wear apps needs to be updated. Only shown on the wearable. [CHAR LIMIT=NONE] 
          */
         public static final int common_android_wear_notification_needs_update_text=0x7f060009;

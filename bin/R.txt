@@ -577,6 +577,7 @@ int string action_my_place 0x7f06003e
 int string action_my_start 0x7f060044
 int string action_settings 0x7f06003f
 int string app_name 0x7f060032
+int string cannot_dir 0x7f060054
 int string common_android_wear_notification_needs_update_text 0x7f060009
 int string common_android_wear_update_text 0x7f060016
 int string common_android_wear_update_title 0x7f060014

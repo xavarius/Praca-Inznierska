@@ -37,7 +37,8 @@ public class MarkerMaintenance {
 	private HashMap<String, MarkerDetails> allPositionsAfterGeocoding = new HashMap<String, MarkerDetails>();
 
 	public MarkerMaintenance(GoogleMap map, String resourceStartPosition, 
-							 String resourceCurrPosition, Context appContext, String meet){
+							 String resourceCurrPosition, Context appContext, String meet)
+	{
 		this.googleMapInstance = map;
 		CURRPOINT = resourceCurrPosition;
 		STARTPOINT = resourceStartPosition;

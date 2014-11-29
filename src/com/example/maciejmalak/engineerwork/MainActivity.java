@@ -156,32 +156,32 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 	public void onSectionAttached(int number) {
 		switch (number) {
 		case 1:
-			map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-			break;
+			makeURLForDirectionRequest();
+			new connectAsyncTask().execute();
+			break;	
 		case 2:
-			map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-			break;
-		case 3:
-			map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-			break;
-		case 4:
-			map.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-			break;
-		case 5:
-			map.setMyLocationEnabled(false);
-			break;
-		case 6:
 			getPlacesNearbyMeetingPlace();
-			break;
-		case 7:
+			break;		
+		case 3:
+			removePolylineFromMap();
+			break;		
+		case 4:
 			removeNearbyPlaces();
 			break;
+		case 5:
+			map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+			break;
+		case 6:
+			map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+			break;
+		case 7:
+			map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+			break;
 		case 8:
-			new connectAsyncTask().execute();
+			map.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
 			break;
 		case 9:
-			DIRECTION_URI = makeURL();
-			removePolylineFromMap();
+			map.setMyLocationEnabled(false);
 			break;
 		}
 	}
@@ -484,17 +484,12 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 		
 	}
 	
-	public String makeURL(){
+	public void makeURLForDirectionRequest(){
 		double sourcelat, sourcelog,  destlat, destlog;
 		
 		LatLng meetPos = MarkerFactory.getMeetingPlaceLatLng();
 		LatLng startPos = MarkerFactory.getStartPlaceLatLng();
-		
-	/*	destlat = 51.079384; //meetPos.latitude;
-		destlog = 17.033746;//meetPos.longitude;
-		sourcelat = 51.679384; //startPos.latitude;
-		sourcelog = 17.533746;//startPos.longitude;
-	 */		
+	
 		System.out.println(meetPos.toString());
 		System.out.println(startPos.toString());
 		
@@ -517,9 +512,12 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 			urlString.append(",");
 			urlString.append(Double.toString( destlog));
 			urlString.append("&sensor=false&mode=driving&alternatives=true");
-			return urlString.toString(); 
+			DIRECTION_URI =  urlString.toString(); 
+		} else {
+			Toast.makeText(getApplicationContext(),
+					R.string.cannot_dir, Toast.LENGTH_SHORT)
+					.show();
 		}
-		return null;
 	}
 
 	
