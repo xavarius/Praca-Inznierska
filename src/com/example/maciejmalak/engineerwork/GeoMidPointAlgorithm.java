@@ -28,10 +28,8 @@ public class GeoMidPointAlgorithm {
 			avrY = 0,
 			avrZ = 0;
 
-		/* Converting stored positions to Cartesian Coordinates */
 		convertLocationToCartesianCoordinates();
 
-		/* Counting center of gravity - geo midpoint */
 		for(Entry<String, CartesiansCoordinates> entry : 
 			allPositionsAsCartesianCoordinates.entrySet()) {
 			CartesiansCoordinates coordinates = entry.getValue();
