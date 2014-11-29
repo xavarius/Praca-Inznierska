@@ -29,16 +29,8 @@ public class JSONParser {
 
             HttpResponse httpResponse = httpClient.execute(httpPost);
             HttpEntity httpEntity = httpResponse.getEntity();
-            is = httpEntity.getContent();           
-
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
+            is = httpEntity.getContent();     
+            
             BufferedReader reader = new BufferedReader(new InputStreamReader(
                     is, "iso-8859-1"), 8);
             StringBuilder sb = new StringBuilder();
@@ -49,8 +41,15 @@ public class JSONParser {
 
             json = sb.toString();
             is.close();
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace(); 
         } catch (Exception e) {
-            Log.e("Buffer Error", "Error converting result " + e.toString());
+            e.printStackTrace();
         }
         return json;
 
