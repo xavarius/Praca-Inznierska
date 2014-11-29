@@ -156,29 +156,29 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 	public void onSectionAttached(int number) {
 		switch (number) {
 		case 1:
+			map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+			break;
+		case 2:
+			map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+			break;
+		case 3:
+			map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+			break;
+		case 4:
+			map.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+			break;
+		case 5:
 			makeURLForDirectionRequest();
 			new connectAsyncTask().execute();
 			break;	
-		case 2:
+		case 6:
 			getPlacesNearbyMeetingPlace();
 			break;		
-		case 3:
+		case 7:
 			removePolylineFromMap();
 			break;		
-		case 4:
-			removeNearbyPlaces();
-			break;
-		case 5:
-			map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-			break;
-		case 6:
-			map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-			break;
-		case 7:
-			map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-			break;
 		case 8:
-			map.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+			removeNearbyPlaces();
 			break;
 		case 9:
 			map.setMyLocationEnabled(false);
