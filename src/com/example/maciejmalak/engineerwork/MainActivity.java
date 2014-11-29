@@ -66,6 +66,7 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 	private MarkerMaintenance MarkerFactory;
 	private PlacesAPIMaintenance placesOnMap;
 	private String providerName;
+	private static String DIRECTION_URI;
 	private Criteria criteria;
 	private Location userStartingPoint;
 	private static List<Polyline> polylineOnMap = new ArrayList<Polyline>();
@@ -179,6 +180,7 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 			new connectAsyncTask().execute();
 			break;
 		case 9:
+			DIRECTION_URI = makeURL();
 			removePolylineFromMap();
 			break;
 		}
@@ -493,11 +495,14 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 		sourcelat = 51.679384; //startPos.latitude;
 		sourcelog = 17.533746;//startPos.longitude;
 	 */		
+		System.out.println(meetPos.toString());
+		System.out.println(startPos.toString());
+		
 		if(meetPos != null && startPos != null) {
-			destlat = 51.079384; //meetPos.latitude;
-			destlog = 17.033746;//meetPos.longitude;
-			sourcelat = 51.679384; //startPos.latitude;
-			sourcelog = 17.533746;//startPos.longitude;
+			destlat = meetPos.latitude;
+			destlog = meetPos.longitude;
+			sourcelat = startPos.latitude;
+			sourcelog = startPos.longitude;
 				
 			StringBuilder urlString = new StringBuilder();
 			urlString.append("http://maps.googleapis.com/maps/api/directions/json");
@@ -514,6 +519,7 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 			urlString.append("&sensor=false&mode=driving&alternatives=true");
 			return urlString.toString(); 
 		}
+		return null;
 	}
 
 	
@@ -591,10 +597,10 @@ implements NavigationDrawerFragment.NavigationDrawerCallbacks, LocationListener 
 	    }
 	    @Override
 	    protected String doInBackground(Void... params) {
-	    	String URI = makeURL();
-	    	if(URI != null) {
+	    	
+	    	if(DIRECTION_URI != null) {
 	    		JSONParser jParser = new JSONParser();
-	    		String json = jParser.getJSONFromUrl(URI);
+	    		String json = jParser.getJSONFromUrl(DIRECTION_URI);
 	    		return json;
 	    	}
 	    	return null;
