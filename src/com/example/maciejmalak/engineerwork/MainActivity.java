@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map.Entry;
 
 import org.json.JSONArray;
@@ -501,29 +502,27 @@ public class MainActivity extends ActionBarActivity
 		}
 	}
 
-
-	public void drowPolylineFromStartTOMeet(String  result) {
-
+	public void drowPolylineFromStartTOMeet(String result) {
 		try {
-			final JSONObject json = new JSONObject(result);
+			JSONObject json = new JSONObject(result);
 			JSONArray routeArray = json.getJSONArray("routes");
 			JSONObject routes = routeArray.getJSONObject(0);
 			JSONObject overviewPolylines = routes.getJSONObject("overview_polyline");
-			String encodedString = overviewPolylines.getString("points");
-			List<LatLng> list = decodePolyline(encodedString);
+			String pointOnRoute = overviewPolylines.getString("points");
+			List<LatLng> listOfPointToDraw = decodePolyline(pointOnRoute);
 
-			for(int z = 0; z<list.size()-1;z++){
-				LatLng src= list.get(z);
-				LatLng dest= list.get(z+1);
+			for(int i=0; i<listOfPointToDraw.size()-1;i++){
+				LatLng point1= listOfPointToDraw.get(i);
+				LatLng point2= listOfPointToDraw.get(i+1);
 				Polyline line = map.addPolyline(new PolylineOptions()
-				.add(new LatLng(src.latitude, src.longitude), new LatLng(dest.latitude,   dest.longitude))
-				.width(5)
+				.add(new LatLng(point1.latitude, point1.longitude), new LatLng(point2.latitude, point2.longitude))
+				.width(6)
 				.color(Color.RED).geodesic(true));
 				polylineOnMap.add(line);
 			}
 		} 
 		catch (JSONException e) {
-
+			e.printStackTrace();
 		}
 	}
 
@@ -574,9 +573,7 @@ public class MainActivity extends ActionBarActivity
 		@Override
 		protected String doInBackground(Void... params) {
 			if(DIRECTION_URI != null) {
-				JSONParser jParser = new JSONParser();
-				String json = jParser.getJSONFromUrl(DIRECTION_URI);
-				return json;
+				return JSONParser.getJSONFromUrl(DIRECTION_URI);
 			}
 			return null;
 		}

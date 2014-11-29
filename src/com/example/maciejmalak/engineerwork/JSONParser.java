@@ -21,13 +21,9 @@ public class JSONParser {
     static JSONObject jObj = null;
     static String json = "";
 
-    public JSONParser() {
-    }
-    public String getJSONFromUrl(String url) {
+    public static String getJSONFromUrl(String url) {
 
-        // Making HTTP request
         try {
-            // defaultHttpClient
             DefaultHttpClient httpClient = new DefaultHttpClient();
             HttpPost httpPost = new HttpPost(url);
 
