@@ -46,7 +46,7 @@ public class PlacesAPIMaintenance {
 					+ "&types="+URLEncoder.encode(types,"UTF-8")
 					+ "&key="+APIKey;
 		
-		new GetPlaces().execute(placesURI);
+		new placesASyncTask().execute(placesURI);
 	}
 	
 	public MarkerOptions getMarkerOptions(String key, LatLng pos) {
@@ -66,7 +66,7 @@ public class PlacesAPIMaintenance {
 		}
 	}
 	
-	private class GetPlaces extends AsyncTask<String, Void, String> {
+	private class placesASyncTask extends AsyncTask<String, Void, String> {
 		private ProgressDialog progressDialog;
 		
 		@Override

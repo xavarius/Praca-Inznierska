@@ -167,7 +167,7 @@ public class MainActivity extends ActionBarActivity
 			break;
 		case 5:
 			makeURLForDirectionRequest();
-			new connectAsyncTask().execute();
+			new directionAsyncTask().execute();
 			break;	
 		case 6:
 			getPlacesNearbyMeetingPlace();
@@ -564,7 +564,7 @@ public class MainActivity extends ActionBarActivity
 		return poly;
 	}
 
-	private class connectAsyncTask extends AsyncTask<Void, Void, String>{
+	private class directionAsyncTask extends AsyncTask<Void, Void, String>{
 		private ProgressDialog progressDialog;
 
 		@Override
